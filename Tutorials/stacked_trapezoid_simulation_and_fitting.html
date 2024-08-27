@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tutorial for Stacked Trapezoid model &mdash; cdsaxs v0.0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css" />
+      <link rel="stylesheet" type="text/css" href="../_static/nbsphinx-code-cells.css" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+        <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Tutorial for Strong castle model" href="strong_castle_simulation.html" />
+    <link rel="prev" title="Tutorials" href="../tutorials.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            cdsaxs
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">User Guide:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html#installation">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html#background">Background</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../tutorials.html">Tutorials</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../tutorials.html#stacked-trapezoid-model">Stacked Trapezoid Model</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Tutorial for Stacked Trapezoid model</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#Simulation">Simulation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Description-of-the-parameters:">Description of the parameters:</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials.html#strong-castle-model">Strong Castle Model</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../modules.html">Api reference</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">For Developers:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../for_developpers.html">Setting Up a Development Environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../for_developpers.html#project-structure">Project Structure</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../for_developpers.html#creating-a-new-simulation-model">Creating a New Simulation Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../for_developpers.html#testing">Testing</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">cdsaxs</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../tutorials.html">Tutorials</a></li>
+      <li class="breadcrumb-item active">Tutorial for Stacked Trapezoid model</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/Tutorials/stacked_trapezoid_simulation_and_fitting.ipynb.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="Tutorial-for-Stacked-Trapezoid-model">
+<h1>Tutorial for Stacked Trapezoid model<a class="headerlink" href="#Tutorial-for-Stacked-Trapezoid-model" title="Permalink to this heading"></a></h1>
+<p>This tutorial shows how to do simulations for stacked trapezoid model and how to fit the experimental data using this model.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>from cdsaxs.simulations.stacked_trapezoid import StackedTrapezoidSimulation
+import numpy as np
+</pre></div>
+</div>
+</div>
+<section id="Simulation">
+<h2>Simulation<a class="headerlink" href="#Simulation" title="Permalink to this heading"></a></h2>
+<section id="Prepare-the-data">
+<h3>Prepare the data<a class="headerlink" href="#Prepare-the-data" title="Permalink to this heading"></a></h3>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>pitch = 100 #nm distance between two lines
+qzs = np.linspace(-0.5, 0.5, 121)
+qxs = 2 * np.pi / pitch * np.ones_like(qzs)
+
+#parameters
+dwx = 0.1
+dwz = 0.1
+i0 = 10
+bkg = 0.1
+y1 = 0.
+height = 20. #same as [20., 20.]
+bot_cd = 40.
+swa = [80., 80.0]
+
+langle = np.deg2rad(np.asarray(swa))
+rangle = np.deg2rad(np.asarray(swa))
+
+#simulation data
+i_params = {&#39;heights&#39;: height,
+            &#39;langles&#39;: langle,
+            &#39;rangles&#39;: rangle,
+            &#39;y_start&#39;: y1,
+            &#39;bot_cd&#39;: bot_cd,
+            &#39;dwx&#39;: dwx,
+            &#39;dwz&#39;: dwz,
+            &#39;i0&#39;: i0,
+            &#39;bkg_cste&#39;: bkg,
+            }
+</pre></div>
+</div>
+</div>
+</section>
+</section>
+<section id="Description-of-the-parameters:">
+<h2>Description of the parameters:<a class="headerlink" href="#Description-of-the-parameters:" title="Permalink to this heading"></a></h2>
+<p>dwx, dwz, i0 and bkg are the parameters necessary to calculate the Debye-waller factor which accounts for the real world imperfections in the model. You can read more about it <a class="reference external" href="https://en.wikipedia.org/wiki/Debye%E2%80%93Waller_factor">here</a>.</p>
+<p>The other parameters are the geometrical parameters of the model. The parameters are as follows:</p>
+<p><em>y_start</em> - starting y-coordinate of the base of the nano structure</p>
+<p><em>bot_cd</em> - bottom width (CD for critical dimension) of the nano structure</p>
+<p><em>heights</em> - height of each individual trapezoid can be a single value or a list of values in case of list of values, each value corresponds to the height of each individual trapezoid.</p>
+<p><em>langles</em> - list of all the left bottom angles of each individual trapezoid. The dictionary which is passed should have it in radians.</p>
+<p><em>rangles</em> - list of all the right bottom angles of each individual trapezoid. The dictionary which is passed should have it in radians.</p>
+<p><em>weight</em> - weight of each individual trapezoid to account for the fact that they could be made of different materials. here we will assume that all the trapezoids are made of the same material hence the weight is not necessary.</p>
+<p>Note: In symmetric case either left or right angle can be passed and the other will be calculated using the symmetry.</p>
+<p>So we are constructing a line space pattern and the cross section of each line looks like following:</p>
+<p><img alt="double trapezoid" src="../_images/double_stack.png" /></p>
+<section id="Create-instance-of-the-Simulation-class-and-call-simulate_diffraction-method">
+<h3>Create instance of the Simulation class and call <code class="docutils literal notranslate"><span class="pre">simulate_diffraction</span></code> method<a class="headerlink" href="#Create-instance-of-the-Simulation-class-and-call-simulate_diffraction-method" title="Permalink to this heading"></a></h3>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>Simulation1 = StackedTrapezoidSimulation(qys=qxs, qzs=qzs)
+
+intensity = Simulation1.simulate_diffraction(params=i_params)
+
+#plot
+import matplotlib.pyplot as plt
+plt.plot(qzs, intensity)
+plt.xlabel(r&#39;$q_{z}$&#39;)
+plt.ylabel(&#39;Intensity&#39;)
+plt.title(&#39;Stacked Trapezoid diffraction simulation&#39;)
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Text(0.5, 1.0, &#39;Stacked Trapezoid diffraction simulation&#39;)
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/Tutorials_stacked_trapezoid_simulation_and_fitting_8_1.png" src="../_images/Tutorials_stacked_trapezoid_simulation_and_fitting_8_1.png" />
+</div>
+</div>
+<section id="Fitting">
+<h4>Fitting<a class="headerlink" href="#Fitting" title="Permalink to this heading"></a></h4>
+<p>A txt or csv file with the experimental data containing the values for <span class="math notranslate nohighlight">\(Q_{x}\)</span>, <span class="math notranslate nohighlight">\(Q_{z}\)</span> and intensities can be in the format as shown below:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>```
+qx, qz, intensity
+0.1, 0.2, 0.3
+0.2, 0.3, 0.4
+0.3, 0.4, 0.5
+...
+```
+</pre></div>
+</div>
+<p>for a text file you can read the data using the following code:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">genfromtxt</span><span class="p">(</span><span class="s1">&#39;path_to_file.txt&#39;</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s1">&#39;,&#39;</span><span class="p">,</span> <span class="n">skip_header</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">qx</span> <span class="o">=</span> <span class="n">data</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">qz</span> <span class="o">=</span> <span class="n">data</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">intensity</span> <span class="o">=</span> <span class="n">data</span><span class="p">[:,</span><span class="mi">2</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>We will suppose that we’ve read the data and stored it in the variables qx, qz and intensity. And we’ll use the simulated intensities used in the previous section.</p>
+<p>Let’s introduce a bit of noise to the simulated intensities to make it more realistic.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>import matplotlib.pyplot as plt
+intensity_noisy = intensity + np.sqrt(intensity) * np.random.normal(0, 300, intensity.shape)
+plt.plot(qzs, intensity, label=&#39;original&#39;)
+plt.plot(qzs, intensity_noisy, label=&#39;added noise&#39;)
+plt.ylabel(&#39;Intensity&#39;)
+plt.xlabel(&#39;qz&#39;)
+plt.legend()
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+&lt;matplotlib.legend.Legend at 0x7cf5a17f8490&gt;
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/Tutorials_stacked_trapezoid_simulation_and_fitting_12_1.png" src="../_images/Tutorials_stacked_trapezoid_simulation_and_fitting_12_1.png" />
+</div>
+</div>
+<p>Now that we have our experimental data good to go for the fitting we need to provide a list of initial values and bounds for the parameters. The bounds are necessary to make sure that the fitting algorithm doesn’t lose its way looking for impossible values.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>initial_params = {&#39;heights&#39;: {&#39;value&#39;: height+2, &#39;variation&#39;: 10E-1},
+                    &#39;langles&#39;: {&#39;value&#39;: langle-0.2, &#39;variation&#39;: 10E-1},
+                    &#39;rangles&#39;: {&#39;value&#39;: rangle-0.50, &#39;variation&#39;: 10E-1},
+                    &#39;y_start&#39;: {&#39;value&#39;: y1+1, &#39;variation&#39;: 10E-1},
+                    &#39;bot_cd&#39;: {&#39;value&#39;: bot_cd-1, &#39;variation&#39;: 10E-2},
+                    &#39;dwx&#39;: {&#39;value&#39;: dwx, &#39;variation&#39;: 10E-5},
+                    &#39;dwz&#39;: {&#39;value&#39;: dwz, &#39;variation&#39;: 10E-5},
+                    &#39;i0&#39;: {&#39;value&#39;: i0, &#39;variation&#39;: 10E-5},
+                    &#39;bkg_cste&#39;: {&#39;value&#39;: bkg, &#39;variation&#39;: 10E-5}
+                    }
+</pre></div>
+</div>
+</div>
+<p>Create an instance of the Simulation class and pass it to the Fitter class along with data to fit</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>from cdsaxs.fitter import Fitter
+Simulation2 = StackedTrapezoidSimulation(use_gpu=False, qys=qxs, qzs=qzs, initial_guess=initial_params)
+
+Fitter1 = Fitter(Simulation=Simulation2, exp_data=intensity)
+</pre></div>
+</div>
+</div>
+<p>Then we’ll call the <code class="docutils literal notranslate"><span class="pre">cmaes</span></code> method of the Fitter class to fit the data. It’s important to know that this method provides a normalized set of values between -sigma and sigma and it is rescaled to the parameter values according to the model used.</p>
+<p><em>sigma</em> - the standard deviation of the values generated by the <code class="docutils literal notranslate"><span class="pre">cmaes</span></code> method.</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>Note: Similar to bound denoted by variation the parameter sigma helps to control the exploration of the algorithm. The larger the value of sigma the further the algorithm explores the parameter space and vice versa. Thus they need to be adjusted for the algorithm to converge to the optimal solution.
+</pre></div>
+</div>
+<p><em>ngen</em> - the number of generations to run the algorithm</p>
+<p><em>popsize</em> - the population size</p>
+<p><em>mu</em> - the number of parents to select for the next generation</p>
+<p><em>n_default</em> - the number parameters to fit</p>
+<p><em>restarts</em> - the number of times to restart the algorithm</p>
+<p><em>tolhistfun</em> - the tolerance for the history of the function value</p>
+<p><em>ftarget</em> - the target fitness value</p>
+<p><em>restart_from_best</em> - whether to restart from the best solution found so far</p>
+<p><em>verbose</em> - whether to print the progress of the algorithm</p>
+<p><em>dir_save</em> - the directory to save the results of the fitting</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>bestfit, fitness = Fitter1.cmaes(sigma=1, ngen=100, popsize=500, mu=10, n_default=11, restarts=1, tolhistfun=10E-5, ftarget=0, restart_from_best=True, verbose=False)
+print(bestfit)
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Iteration terminated due to ngen criterion after 100 gens
+Doubled popsize
+Iteration terminated due to ngen criterion after 100 gens
+     height1   langle1   langle2  rangle1   rangle2   y_start     bot_cd  \
+0  20.000472  1.395713  1.396464  1.39704  1.395909  3.115344  39.990726
+
+        dwx       dwz        i0  bkg_cste
+0  0.099895  0.099972  9.999777  0.100125
+</pre></div></div>
+</div>
+<p>Now we have the bestfit parameters in the form of a pandas dataframe. We will look at the statistical information generated by the <code class="docutils literal notranslate"><span class="pre">mcmc_bestfit_stats</span></code> method.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>with np.errstate(divide=&#39;ignore&#39;, invalid=&#39;ignore&#39;, over=&#39;ignore&#39;):
+    stats = Fitter1.mcmc_bestfit_stats(N=11, sigma = 1., nsteps=100, nwalkers=500)
+
+    print(stats)
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+11 parameters
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+100%|██████████| 100/100 [00:02&lt;00:00, 37.32it/s]
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+               mean       std  count        min        max   lower_ci  \
+height1   20.006504  0.114185  33211  19.161739  20.895523  20.004890
+langle1    1.425582  0.223816  33211   0.001393   3.072958   1.422419
+langle2    1.430582  0.188886  33211   0.027713   2.838559   1.427912
+rangle1    1.463491  0.209591  33211   0.028910   3.134754   1.460528
+rangle2    1.416376  0.223697  33211   0.000645   3.132805   1.413214
+y_start    3.094505  0.243718  33211   0.731132   5.008785   3.091060
+bot_cd    39.986612  0.021570  33211  39.833996  40.158385  39.986307
+dwx        0.099891  0.000023  33211   0.099660   0.100052   0.099891
+dwz        0.099969  0.000030  33211   0.099561   0.100279   0.099969
+i0         9.999774  0.000023  33211   9.999504   9.999964   9.999774
+bkg_cste   0.100127  0.000027  33211   0.099858   0.100435   0.100127
+
+           upper_ci  uncertainity
+height1   20.008118  1.614033e-03
+langle1    1.428746  3.163707e-03
+langle2    1.433252  2.669954e-03
+rangle1    1.466453  2.962627e-03
+rangle2    1.419538  3.162018e-03
+y_start    3.097950  3.445021e-03
+bot_cd    39.986917  3.048968e-04
+dwx        0.099891  3.299119e-07
+dwz        0.099970  4.215146e-07
+i0         9.999774  3.283757e-07
+bkg_cste   0.100128  3.800473e-07
+</pre></div></div>
+</div>
+</section>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../tutorials.html" class="btn btn-neutral float-left" title="Tutorials" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="strong_castle_simulation.html" class="btn btn-neutral float-right" title="Tutorial for Strong castle model" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Nischal Dhungana.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Overview &mdash; cdsaxs v0.0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+        <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Tutorials" href="tutorials.html" />
+    <link rel="prev" title="cdsaxs documentation" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            cdsaxs
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">User Guide:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#installation">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#creating-an-isolated-python-environment">Creating an isolated Python environment</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#using-virtualenv">Using virtualenv</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#using-conda">Using conda</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#optional-dependencies">Optional dependencies</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="#background">Background</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#simulation-models">Simulation models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#fitting-algorithm">Fitting algorithm</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">Api reference</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">For Developers:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="for_developpers.html">Setting Up a Development Environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="for_developpers.html#project-structure">Project Structure</a></li>
+<li class="toctree-l1"><a class="reference internal" href="for_developpers.html#creating-a-new-simulation-model">Creating a New Simulation Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="for_developpers.html#testing">Testing</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">cdsaxs</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Overview</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/introduction.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="overview">
+<h1>Overview<a class="headerlink" href="#overview" title="Permalink to this heading"></a></h1>
+<p>Miniaturizing transistors, the building blocks of integrated circuits, presents significant challenges for the semiconductor industry. Precisely measuring these features during production is crucial for high-quality chips. Existing in-line metrology techniques, such as optical critical-dimension (OCD) scatterometry and critical-dimension scanning electron microscopy (CD-SEM), are nearing their limits. OCD struggles with the inherent limitations of light and shrinking features, while CD-SEM, despite providing valuable insights, is restricted by sampling area and resolution. To overcome these obstacles, the industry is exploring X-ray-based metrology. X-rays, with their shorter wavelengths, allow for more precise analysis and are sensitive to variations in composition, providing richer data.</p>
+<p>CD-SAXS (Critical Dimension Small Angle X-ray Scattering) is a promising technique for nano-structure electronics. It uses a transmission geometry, sending the beam through the sample and the 750 micrometer-thick silicon wafer. The X-ray spot size varies between 10-1000 μm, enabling the measurement of small patterned areas. Studies have shown CD-SAXS’s effectiveness in characterizing the shape and spacing of nanometer-sized patterns.</p>
+<p>Although several big companies are developing software for CD-SAXS, this technique is still in its infancy and there isn’t an open-source coherent package available for its data analysis. Thus, this <code class="docutils literal notranslate"><span class="pre">cdsaxs</span></code> package is aimed at providing simulation and fitting tools for CD-SAXS synchrotron data for researchers.</p>
+<p>The collection of <a class="reference external" href="https://github.com/Xi-CAM/Xi-cam.CDSAXS/blob/master/xicam/CDSAXS/cdsaxs.py">functions</a> developed at CEA (French Alternative Energies and Atomic Energy Commission) by former PhD students and at Lawrence Berkeley National Laboratory and Brookhaven National Laboratory served as the foundation for this package.</p>
+</section>
+<section id="installation">
+<h1>Installation<a class="headerlink" href="#installation" title="Permalink to this heading"></a></h1>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>cdsaxs can currently be used on Python &gt;=3.8, 3.9, 3.10, 3.11 and 3.12.</p>
+</div>
+<p>cdsaxs is available to install through <code class="code docutils literal notranslate"><span class="pre">pip</span></code>:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span class="c1"># Within a venv:</span>
+<span class="o">(</span>cdsaxs-venv<span class="o">)</span><span class="w"> </span>$<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>cdsaxs
+</pre></div>
+</div>
+<p>and <code class="code docutils literal notranslate"><span class="pre">conda</span></code> (via conda-forge):</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span class="c1"># Within a conda env:</span>
+<span class="o">(</span>cdsaxs<span class="o">)</span><span class="w"> </span>$<span class="w"> </span>conda<span class="w"> </span>install<span class="w"> </span>-c<span class="w"> </span>conda-forge<span class="w"> </span>cdsaxs
+</pre></div>
+</div>
+<section id="creating-an-isolated-python-environment">
+<h2>Creating an isolated Python environment<a class="headerlink" href="#creating-an-isolated-python-environment" title="Permalink to this heading"></a></h2>
+<p>It is good practice to use a dedicated virtual environment for cdsaxs
+and its dependencies to avoid affecting other environments on your system.
+To achieve this you can use a virtualenv or a conda environment, according
+to preference.</p>
+<section id="using-virtualenv">
+<h3>Using virtualenv<a class="headerlink" href="#using-virtualenv" title="Permalink to this heading"></a></h3>
+<p>You can use <a class="reference external" href="https://virtualenv.pypa.io/">virtualenv</a> or <a class="reference external" href="https://docs.python.org/3/tutorial/venv.html">venv</a> if you have a system-wide
+compatible Python installation. For Mac OS X, using <a class="reference internal" href="#conda">conda</a> is recommended.</p>
+<p>To create a new virtualenv for cdsaxs, you can use the following command:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>virtualenv<span class="w"> </span>-p<span class="w"> </span>python3<span class="w"> </span>~/cdsaxs-venv/
+</pre></div>
+</div>
+<p>If multiple Python versions are installed, replace <code class="code docutils literal notranslate"><span class="pre">python3</span></code> with
+<code class="code docutils literal notranslate"><span class="pre">python3.9</span></code> or a later version.</p>
+<p>Replace <code class="code docutils literal notranslate"><span class="pre">~/cdsaxs-venv/</span></code> with any path where you would like to create
+the venv. You can then activate the virtualenv with</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span><span class="nb">source</span><span class="w"> </span>~/cdsaxs-venv/bin/activate
+</pre></div>
+</div>
+<p>Afterwards, your shell prompt should be prefixed with <code class="code docutils literal notranslate"><span class="pre">(cdsaxs-venv)</span></code> to
+indicate that the environment is active:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span class="o">(</span>cdsaxs-venv<span class="o">)</span><span class="w"> </span>$
+</pre></div>
+</div>
+<p>Now the environment is ready to install cdsaxs using
+the <code class="code docutils literal notranslate"><span class="pre">pip</span></code> command at the top of this page.</p>
+<p>For more information about virtualenv, for example if you are using a shell
+without <code class="code docutils literal notranslate"><span class="pre">source</span></code>, please <a class="reference external" href="https://virtualenv.pypa.io/en/stable/user_guide.html">refer to the virtualenv documentation</a>. If you are often
+working with virtualenvs, using a convenience wrapper like <a class="reference external" href="https://virtualenvwrapper.readthedocs.io/en/latest/">virtualenvwrapper</a> is recommended.</p>
+</section>
+<section id="using-conda">
+<span id="conda"></span><h3>Using conda<a class="headerlink" href="#using-conda" title="Permalink to this heading"></a></h3>
+<p>If you are already using conda, or if you don’t have a system-wide compatible
+Python installation, you can create a conda environment for cdsaxs.</p>
+<p>This section assumes that you have <a class="reference external" href="https://conda.io/projects/conda/en/latest/user-guide/install/index.html#regular-installation">installed anaconda or miniconda</a>
+and that your installation is working.</p>
+<p>You can create a new conda environment to install cdsaxs with the following
+command:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>conda<span class="w"> </span>create<span class="w"> </span>-n<span class="w"> </span>cdsaxs<span class="w"> </span><span class="nv">python</span><span class="o">=</span><span class="m">3</span>.11
+</pre></div>
+</div>
+<p>Activate the environment with the following command:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>conda<span class="w"> </span>activate<span class="w"> </span>cdsaxs
+</pre></div>
+</div>
+<p>Afterwards, your shell prompt should be prefixed with <code class="code docutils literal notranslate"><span class="pre">(cdsaxs)</span></code> to
+indicate that the environment is active:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span class="o">(</span>cdsaxs<span class="o">)</span><span class="w"> </span>$
+</pre></div>
+</div>
+<p>Now the environment is ready to install cdsaxs using
+the <code class="code docutils literal notranslate"><span class="pre">conda</span></code> command at the top of this page.</p>
+<p>For more information about conda, see their <a class="reference external" href="https://conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html">documentation about creating and
+managing environments</a> .</p>
+</section>
+</section>
+<section id="optional-dependencies">
+<h2>Optional dependencies<a class="headerlink" href="#optional-dependencies" title="Permalink to this heading"></a></h2>
+<p>The <cite>cdsaxs</cite> package is designed to work with <cite>cupy</cite> for GPU acceleration. To install the optional dependencies, use the following command:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span class="o">(</span>cdsaxs<span class="o">)</span><span class="w"> </span>$<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>cdsaxs<span class="o">[</span>gpu<span class="o">]</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="background">
+<h1>Background<a class="headerlink" href="#background" title="Permalink to this heading"></a></h1>
+<section id="simulation-models">
+<h2>Simulation models<a class="headerlink" href="#simulation-models" title="Permalink to this heading"></a></h2>
+<p>Two models were considered in the development of this code. The first model focuses on the cross section of a line in a line-space pattern. In this model, the cross section of a line is represented by a stack of trapezoids, which collectively form the shape of the cross section. This model is known as the Stacked Trapezoid Model.</p>
+<figure class="align-center" id="id1">
+<a class="reference internal image-reference" href="_images/trapezoid.png"><img alt="SEM image in a) is a cross-section of a line in SEM image in b). The black trapezoidal shapes in a) represent the modeling done for this simulation." src="_images/trapezoid.png" style="width: 400px;" /></a>
+<figcaption>
+<p><span class="caption-text"><em>SEM image in a) is a cross-section of a line in SEM image in b). The black trapezoidal shapes in a) represent the modeling done for this simulation.</em></span><a class="headerlink" href="#id1" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<p>The second model introduces another concept known as the Strong Castle Model. This model builds upon the previous one by incorporating an additional nano-structure on top, resulting in an overlay. It provides a tool for representing the overlay between multiple structures.</p>
+<figure class="align-center" id="id2">
+<a class="reference internal image-reference" href="_images/overlay.png"><img alt="Strong castle model where top structure is not aligned thus we have an overlay." src="_images/overlay.png" style="width: 300px;" /></a>
+<figcaption>
+<p><span class="caption-text"><em>Strong castle model where top structure is not aligned thus we have an overlay.</em></span><a class="headerlink" href="#id2" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<p>To calculate the intensity profile of the scattering pattern, we perform a Fourier transformation on each trapezoid and then add them. The Fourier transformation of a trapezoid can be expressed using the following equation:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}F\left(q_{x}, q_{z}\right)=\frac{1}{q_{x}}\left[-\frac{m_{1}}{t_{1}} e^{-i q_{x}\left(\frac{\omega_{0}}{2}\right)}\left(1-e^{-i h\left(\frac{q_{x}}{m_{1}}+q_{z}\right)}\right)\right. \\ +\frac{m_{2}}{t_{2}} e^{-i q_{x}\left(\frac{\omega_{0}}{2}\right)}\left(1-e^{\left.-i h\left(\frac{q_{x}}{m_{2}}+q_{z}\right)\right)}\right]\end{split}\]</div>
+<p>where,</p>
+<div class="math notranslate nohighlight">
+\[m_{1} = \tan\left(\beta_{1}\right)\]</div>
+<div class="math notranslate nohighlight">
+\[m_{2} = \tan\left(\pi - \beta_{r}\right)\]</div>
+<div class="math notranslate nohighlight">
+\[t_{1} = q_{x} + m_{1} q_{z}\]</div>
+<div class="math notranslate nohighlight">
+\[t_{2} = q_{x} + m_{2} q_{z}\]</div>
+<p>The <span class="math notranslate nohighlight">\(\beta\)</span>’s are the bottom side angles of the trapezoid. <span class="math notranslate nohighlight">\(q_{x}\)</span>, <span class="math notranslate nohighlight">\(q_{z}\)</span> are the Fourier space coordinates, <span class="math notranslate nohighlight">\(\omega_{0}\)</span> is the width of the trapezoid, and <span class="math notranslate nohighlight">\(h\)</span> is the height of the trapezoid.</p>
+</section>
+<section id="fitting-algorithm">
+<h2>Fitting algorithm<a class="headerlink" href="#fitting-algorithm" title="Permalink to this heading"></a></h2>
+<p>The intensity map obtained from the synchrotron experiment looks like the following:</p>
+<figure class="align-center" id="id3">
+<a class="reference internal image-reference" href="_images/rotation.png"><img alt="Intensity map and vertical cut of corresponding Bragg order." src="_images/rotation.png" style="width: 400px;" /></a>
+<figcaption>
+<p><span class="caption-text"><em>Intensity map and vertical cut of corresponding Bragg order</em></span><a class="headerlink" href="#id3" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<p>Vertical cuts along the different Bragg order are made to get the intensity profile shown below the intensity map. These profiles are the experimental data that we want to fit.</p>
+<p>The objective of the fitting is to iterate over a high number of different line profiles (represented as various combinations of stacked trapezoids) and to converge towards the profile whose Fourier Transform will best match the experimental data. While the objective seems simple to describe, the problem is complex. Traditional optimization methods used for refinement often fall short when dealing with complex internal structures with numerous parameters, either being trapped in local minima or not converging toward the same solutions.</p>
+<p>Another challenge arises from the possibility of “degenerate” solutions. These occur when multiple structural models can produce the same scattering data, making it difficult to pinpoint the true structure. This is a common issue in scattering analysis.</p>
+<p>Therefore, the ideal scenario for CD-SAXS analysis involves an optimization algorithm that can consistently and rapidly converge on the best possible fit for the data. While some prior knowledge about the underlying structure can accelerate the process, such information is not always readily available. This highlights the need for more efficient algorithms that can handle complex structures even with limited prior knowledge.</p>
+<p>Genetic and evolutionary algorithms have emerged as promising alternatives. These methods mimic biological evolution, with the model parameters acting as the “genetic code.” Starting with randomly generated parameters, these algorithms iteratively refine them through a “mixing strategy” over multiple generations until the optimal set is found. This approach excels at searching large parameter spaces with wide bounds, making it suitable for our purposes.</p>
+<p>One algorithm is the Covariance Matrix Adaptation Evolution Strategy (CMAES). This method is particularly well-suited for high-dimensional optimization problems, making it ideal for complex nano-structure analysis. CMAES operates by maintaining a population of candidate solutions, with each iteration generating new candidates based on the previous generation’s performance. By adapting the covariance matrix of the candidate solutions, CMAES can efficiently explore the parameter space and converge on the optimal solution. The implementation of the <a class="reference external" href="https://deap.readthedocs.io/en/master/examples/cmaes.html">deap</a> library is used for this purpose.</p>
+<p>For the CD-SAXS experiment, the algorithm starts with the experimental data collected. Then, a series of in-depth line profiles are generated through a set of parameters as described earlier. Afterwards, the calculated analytical Fourier transform is compared with the experimental data using a mean-absolute error log:</p>
+<div class="math notranslate nohighlight">
+\[\Xi=\frac{1}{N_{q}-1}\sum_{q}|\log_{10}I_{Sim}(q)-\log_{10}I(q)|\]</div>
+<p>where <span class="math notranslate nohighlight">\(I_{\mathrm{Sim}}(\mathbf{q})\)</span> is the simulated intensity and <span class="math notranslate nohighlight">\(I(\mathbf{q})\)</span> is the experimental intensity. <span class="math notranslate nohighlight">\(\Xi\)</span> is called the goodness of fit. The algorithm then tries to minimize <span class="math notranslate nohighlight">\(\Xi\)</span> by adjusting the parameters of the model.</p>
+<p>We repeat this process until we are satisfied with the precision of the fit. The final set of parameters that gives the best fit and its fitness value is the output of the algorithm.</p>
+<p>The CMAES algorithm provides a single best-fit solution for the nano-structure parameters. However, it is essential to understand the uncertainty associated with these parameters. This uncertainty relates to the different possible combinations of parameters that could result in a similar goodness of fit. For instance, slightly decreasing the height of one trapezoid and increasing the height of another can result in a similar goodness of fit. To address this, we can use the MCMC algorithm to explore and find all the sets of populations that can result in the same goodness of fit. The <a class="reference external" href="https://emcee.readthedocs.io/en/stable/">emcee</a> library was very handy for this purpose.</p>
+<p>Once all the populations of possible solutions are found, we can use them to obtain statistical information about the parameters. Notably, the uncertainty of the parameters using the confidence interval.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="cdsaxs documentation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="tutorials.html" class="btn btn-neutral float-right" title="Tutorials" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Nischal Dhungana.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

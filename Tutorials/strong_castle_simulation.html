@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tutorial for Strong castle model &mdash; cdsaxs v0.0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css" />
+      <link rel="stylesheet" type="text/css" href="../_static/nbsphinx-code-cells.css" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+        <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Api reference" href="../modules.html" />
+    <link rel="prev" title="Tutorial for Stacked Trapezoid model" href="stacked_trapezoid_simulation_and_fitting.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            cdsaxs
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">User Guide:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html#installation">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html#background">Background</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../tutorials.html">Tutorials</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../tutorials.html#stacked-trapezoid-model">Stacked Trapezoid Model</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../tutorials.html#strong-castle-model">Strong Castle Model</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Tutorial for Strong castle model</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#Simulation">Simulation</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../modules.html">Api reference</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">For Developers:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../for_developpers.html">Setting Up a Development Environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../for_developpers.html#project-structure">Project Structure</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../for_developpers.html#creating-a-new-simulation-model">Creating a New Simulation Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../for_developpers.html#testing">Testing</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">cdsaxs</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../tutorials.html">Tutorials</a></li>
+      <li class="breadcrumb-item active">Tutorial for Strong castle model</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/Tutorials/strong_castle_simulation.ipynb.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="Tutorial-for-Strong-castle-model">
+<h1>Tutorial for Strong castle model<a class="headerlink" href="#Tutorial-for-Strong-castle-model" title="Permalink to this heading"></a></h1>
+<p>This tutorial shows how to do simulations using strong castle model and how to fit the experimental data using this model.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>from cdsaxs.fitter import Fitter
+from cdsaxs.simulations.strong_castle import StrongCastleSimulation
+import numpy as np
+</pre></div>
+</div>
+</div>
+<section id="Simulation">
+<h2>Simulation<a class="headerlink" href="#Simulation" title="Permalink to this heading"></a></h2>
+<section id="Prepare-the-data">
+<h3>Prepare the data<a class="headerlink" href="#Prepare-the-data" title="Permalink to this heading"></a></h3>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>pitch = 100 #nm distance between two trapezoidal bars
+qzs = np.linspace(-0.5, 0.5, 201)
+qxs = 2 * np.pi / pitch * np.ones_like(qzs)
+
+#Initial parameters
+dwx = 0.1
+dwz = 0.1
+i0 = 10
+bkg = 0.1
+y1 = 0.
+height = 10.
+bot_cd = 40.
+top_cd = 20.
+swa = [90., 90.0, 90.0]
+overlay = 10
+#fixed parameters not be fitted
+n1 = 2
+n2 = 1
+
+langle = np.deg2rad(np.asarray(swa))
+rangle = np.deg2rad(np.asarray(swa))
+
+
+overlay_params = {&#39;heights&#39;: height,
+            &#39;langles&#39;: langle,
+            &#39;rangles&#39;: rangle,
+            &#39;y_start&#39;: y1,
+            &#39;bot_cd&#39;: bot_cd,
+            &#39;dwx&#39;: dwx,
+            &#39;dwz&#39;: dwz,
+            &#39;i0&#39;: i0,
+            &#39;bkg_cste&#39;: bkg,
+            &#39;overlay&#39;: overlay,
+            &#39;top_cd&#39;: top_cd,
+            &#39;n1&#39;: n1,
+            &#39;n2&#39;: n2,
+            }
+</pre></div>
+</div>
+</div>
+<p>There are only 4 parameters that are different from the stacked trapezoid model, namely <code class="docutils literal notranslate"><span class="pre">overlay</span></code>, <code class="docutils literal notranslate"><span class="pre">top_cd</span></code>, <code class="docutils literal notranslate"><span class="pre">n1</span></code> and `n2.</p>
+<p>So the above parameters give us the following cross section:</p>
+<p><img alt="overlay" src="../_images/overlay_ex.png" /></p>
+<p><code class="docutils literal notranslate"><span class="pre">n1</span></code> and <code class="docutils literal notranslate"><span class="pre">n2</span></code> correspond to the number of trapezoids in the bottom and top part of the model respectively.</p>
+<p>Discussion about other parameters can be found in the <a class="reference external" href="https://github.com/CEA-MetroCarac/cdsaxs/blob/main/Tutorials/stacked_trapezoid_simulation_and_fitting.ipynb">stacked trapezoid model tutorial.</a></p>
+<p>Now we will calculate the intensity exactly with strong castle model and plot the data.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>Simulation1 = StrongCastleSimulation(qys=qxs, qzs=qzs)
+
+intensity = Simulation1.simulate_diffraction(params=overlay_params)
+
+#plot
+import matplotlib.pyplot as plt
+plt.plot(qzs, intensity)
+plt.xlabel(r&#39;$q_{z}$&#39;)
+plt.ylabel(&#39;Intensity&#39;)
+plt.title(&#39;Stacked Trapezoid diffraction simulation&#39;)
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Text(0.5, 1.0, &#39;Stacked Trapezoid diffraction simulation&#39;)
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/Tutorials_strong_castle_simulation_7_1.png" src="../_images/Tutorials_strong_castle_simulation_7_1.png" />
+</div>
+</div>
+<section id="Fitting">
+<h4>Fitting<a class="headerlink" href="#Fitting" title="Permalink to this heading"></a></h4>
+<p>We will do exactly the same steps as in the <a class="reference internal" href="stacked_trapezoid_simulation_and_fitting.html"><span class="doc">stacked trapezoid model tutorial.</span></a> We will use the calculated intensities above as experimental and fit them with the strong castle model.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>import matplotlib.pyplot as plt
+intensity_noisy = intensity + np.sqrt(intensity) * np.random.normal(0, 50, intensity.shape)
+plt.plot(qzs, intensity, label=&#39;original&#39;)
+plt.plot(qzs, intensity_noisy, label=&#39;added noise&#39;)
+plt.ylabel(&#39;Intensity&#39;)
+plt.xlabel(&#39;qz&#39;)
+plt.legend()
+
+
+initial_params = {&#39;heights&#39;: {&#39;value&#39;: height, &#39;variation&#39;: 10E-3},
+                    &#39;langles&#39;: {&#39;value&#39;: langle, &#39;variation&#39;: 10E-3},
+                    &#39;rangles&#39;: {&#39;value&#39;: rangle, &#39;variation&#39;: 10E-3},
+                    &#39;y_start&#39;: {&#39;value&#39;: y1, &#39;variation&#39;: 10E-3},
+                    &#39;bot_cd&#39;: {&#39;value&#39;: bot_cd, &#39;variation&#39;: 10E-3},
+                    &#39;dwx&#39;: {&#39;value&#39;: dwx, &#39;variation&#39;: 10E-5},
+                    &#39;dwz&#39;: {&#39;value&#39;: dwz, &#39;variation&#39;: 10E-5},
+                    &#39;i0&#39;: {&#39;value&#39;: i0, &#39;variation&#39;: 10E-5},
+                    &#39;bkg_cste&#39;: {&#39;value&#39;: bkg, &#39;variation&#39;: 10E-5},
+                    &#39;overlay&#39;: {&#39;value&#39;: overlay, &#39;variation&#39;: 10E-3},
+                    &#39;top_cd&#39;: {&#39;value&#39;: top_cd, &#39;variation&#39;: 10E-3},
+                    &#39;n1&#39;: n1,
+                    &#39;n2&#39;: n2,
+                    }
+
+StrongCastle1 = StrongCastleSimulation(qys=qxs, qzs=qzs, initial_guess=initial_params)
+
+Fitter1 = Fitter(Simulation=StrongCastle1, exp_data=intensity_noisy)
+
+bestfit,fitness = Fitter1.cmaes(sigma=10, ngen=100, popsize=1000, mu=10, n_default=15, restarts=10, tolhistfun=10E-5, ftarget=10, restart_from_best=True, verbose=False)
+
+print(bestfit)
+<br/></pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+    height1   langle1   langle2   langle3  rangle1   rangle2   rangle3  \
+0  10.03779  1.651405  1.480153  1.592135  1.54748  1.708779  1.546373
+
+    y_start     bot_cd       dwx       dwz         i0  bkg_cste   overlay  \
+0  0.017236  40.000198  0.098872  0.100022  10.000337  0.099607  9.962454
+
+      top_cd
+0  19.999823
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/Tutorials_strong_castle_simulation_10_1.png" src="../_images/Tutorials_strong_castle_simulation_10_1.png" />
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>with np.errstate(divide=&#39;ignore&#39;, invalid=&#39;ignore&#39;):
+    stats = Fitter1.mcmc_bestfit_stats(N=15, sigma = 100., nsteps=200, nwalkers=1000)
+
+print(stats)
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+15 parameters
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+100%|██████████| 200/200 [00:19&lt;00:00, 10.10it/s]
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+               mean       std  count        min        max   lower_ci  \
+height1   10.032762  0.154237  99987   8.643961  14.159510  10.031506
+langle1    1.623662  0.050105  99987   0.190842   3.043659   1.623254
+langle2    1.519561  0.066288  99987   0.058702   2.991455   1.519021
+langle3    1.565897  0.066249  99987   0.156458   3.109113   1.565357
+rangle1    1.489218  0.065244  99987   0.503257   2.847647   1.488687
+rangle2    1.699659  0.067377  99987   0.002289   2.783351   1.699110
+rangle3    1.529950  0.067966  99987   0.387656   3.065067   1.529396
+y_start    0.457200  0.089482  99987   0.001071   1.319225   0.456471
+bot_cd    39.984972  0.140185  99987  37.437256  41.138759  39.983830
+dwx        0.098333  0.000941  99987   0.070365   0.127836   0.098326
+dwz        0.100564  0.000768  99987   0.066336   0.108642   0.100558
+i0        10.000036  0.000861  99987   9.958191  10.012195  10.000029
+bkg_cste   0.099234  0.001000  99987   0.083602   0.113223   0.099225
+overlay    9.806060  0.116891  99987   8.054958  13.368229   9.805108
+top_cd    20.008583  0.087218  99987  18.643542  21.149993  20.007873
+
+           upper_ci  uncertainity
+height1   10.034019      0.001257
+langle1    1.624070      0.000408
+langle2    1.520101      0.000540
+langle3    1.566436      0.000540
+rangle1    1.489750      0.000532
+rangle2    1.700208      0.000549
+rangle3    1.530504      0.000554
+y_start    0.457929      0.000729
+bot_cd    39.986114      0.001142
+dwx        0.098341      0.000008
+dwz        0.100570      0.000006
+i0        10.000043      0.000007
+bkg_cste   0.099242      0.000008
+overlay    9.807013      0.000952
+top_cd    20.009294      0.000711
+</pre></div></div>
+</div>
+</section>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="stacked_trapezoid_simulation_and_fitting.html" class="btn btn-neutral float-left" title="Tutorial for Stacked Trapezoid model" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../modules.html" class="btn btn-neutral float-right" title="Api reference" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Nischal Dhungana.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

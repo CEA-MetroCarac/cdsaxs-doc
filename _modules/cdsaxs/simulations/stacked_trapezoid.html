@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>cdsaxs.simulations.stacked_trapezoid &mdash; cdsaxs v0.0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/sphinx_highlight.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            cdsaxs
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">User Guide:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction.html#installation">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction.html#background">Background</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">Api reference</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">For Developers:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../for_developpers.html">Setting Up a Development Environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../for_developpers.html#project-structure">Project Structure</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../for_developpers.html#creating-a-new-simulation-model">Creating a New Simulation Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../for_developpers.html#testing">Testing</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">cdsaxs</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">cdsaxs.simulations.stacked_trapezoid</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for cdsaxs.simulations.stacked_trapezoid</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;This module simulates the diffraction pattern of a stacked trapezoids model.</span>
+
+<span class="sd">It is built upon the protocol defined in base.py.</span>
+
+<span class="sd">Classes:</span>
+<span class="sd">    StackedTrapezoidSimulation: A class representing a simulation of stacked trapezoids for diffraction pattern calculation.</span>
+<span class="sd">    StackedTrapezoidGeometry: A class representing the geometry of stacked trapezoids for simulations.</span>
+<span class="sd">    StackedTrapezoidDiffraction: A class for simulating diffraction from stacked trapezoids.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">cupy</span> <span class="k">as</span> <span class="nn">cp</span>
+    <span class="n">CUPY_AVAILABLE</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="k">except</span> <span class="ne">ModuleNotFoundError</span><span class="p">:</span>
+    <span class="n">CUPY_AVAILABLE</span> <span class="o">=</span> <span class="kc">False</span>
+
+
+<span class="kn">from</span> <span class="nn">.base</span> <span class="kn">import</span> <span class="n">Simulation</span><span class="p">,</span> <span class="n">Geometry</span>
+
+
+<div class="viewcode-block" id="StackedTrapezoidSimulation"><a class="viewcode-back" href="../../../cdsaxs.simulations.html#cdsaxs.simulations.stacked_trapezoid.StackedTrapezoidSimulation">[docs]</a><span class="k">class</span> <span class="nc">StackedTrapezoidSimulation</span><span class="p">(</span><span class="n">Simulation</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A class representing a simulation of stacked trapezoids for diffraction pattern calculation.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        qys (array-like): The q-values in the y-direction for diffraction calculation.</span>
+<span class="sd">        qzs (array-like): The q-values in the z-direction for diffraction calculation.</span>
+<span class="sd">        xp (module): The module used for numerical computations (numpy or cupy).</span>
+<span class="sd">        from_fitter (bool): Indicates if the simulation is called from the fitter.</span>
+<span class="sd">        TrapezoidGeometry (StackedTrapezoidGeometry): The geometry object for the stacked trapezoids.</span>
+<span class="sd">        TrapezoidDiffraction (StackedTrapezoidDiffraction): The diffraction object for the stacked trapezoids.</span>
+
+<span class="sd">    Methods:</span>
+<span class="sd">        __init__(self, qys, qzs, from_fitter=False, use_gpu=False, initial_guess=None):</span>
+<span class="sd">            Initializes the StackedTrapezoidSimulation object.</span>
+<span class="sd">        simulate_diffraction(self, fitparams=None, fit_mode=&#39;cmaes&#39;, best_fit=None):</span>
+<span class="sd">            Simulates the diffraction pattern of the stacked trapezoids.</span>
+<span class="sd">        set_from_fitter(self, from_fitter, best_fit_cmaes_df=None):</span>
+<span class="sd">            Sets the from_fitter attribute and updates the geometry object accordingly.</span>
+<span class="sd">        geometry(self):</span>
+<span class="sd">            Returns the geometry object for the stacked trapezoids.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="StackedTrapezoidSimulation.__init__"><a class="viewcode-back" href="../../../cdsaxs.simulations.html#cdsaxs.simulations.stacked_trapezoid.StackedTrapezoidSimulation.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">qys</span><span class="p">,</span> <span class="n">qzs</span><span class="p">,</span> <span class="n">from_fitter</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">use_gpu</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">initial_guess</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initializes the StackedTrapezoidSimulation object.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            qys (array-like): The q-values in the y-direction for diffraction calculation.</span>
+<span class="sd">            qzs (array-like): The q-values in the z-direction for diffraction calculation.</span>
+<span class="sd">            from_fitter (bool, optional): Indicates if the simulation is called from the fitter. Defaults to False.</span>
+<span class="sd">            use_gpu (bool, optional): Indicates if GPU should be used for numerical computations. Defaults to False.</span>
+<span class="sd">            initial_guess (dict, optional): Initial guess values for the simulation. Defaults to None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">qys</span> <span class="o">=</span> <span class="n">qys</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">qzs</span> <span class="o">=</span> <span class="n">qzs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">xp</span> <span class="o">=</span> <span class="n">cp</span> <span class="k">if</span> <span class="n">use_gpu</span> <span class="ow">and</span> <span class="n">CUPY_AVAILABLE</span> <span class="k">else</span> <span class="n">np</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">from_fitter</span> <span class="o">=</span> <span class="n">from_fitter</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">initial_guess</span> <span class="o">=</span> <span class="n">initial_guess</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">TrapezoidGeometry</span> <span class="o">=</span> <span class="n">StackedTrapezoidGeometry</span><span class="p">(</span><span class="n">xp</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">xp</span><span class="p">,</span> <span class="n">from_fitter</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">from_fitter</span><span class="p">,</span> <span class="n">initial_guess</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">initial_guess</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">TrapezoidDiffraction</span> <span class="o">=</span> <span class="n">StackedTrapezoidDiffraction</span><span class="p">(</span><span class="n">TrapezoidGeometry</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">TrapezoidGeometry</span><span class="p">,</span> <span class="n">xp</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">xp</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="StackedTrapezoidSimulation.simulate_diffraction"><a class="viewcode-back" href="../../../cdsaxs.simulations.html#cdsaxs.simulations.stacked_trapezoid.StackedTrapezoidSimulation.simulate_diffraction">[docs]</a>    <span class="k">def</span> <span class="nf">simulate_diffraction</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fit_mode</span><span class="o">=</span><span class="s1">&#39;cmaes&#39;</span><span class="p">,</span> <span class="n">best_fit</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Simulates the diffraction pattern of the stacked trapezoids.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            fitparams (list, optional): A list of floats coming from the fitter. Defaults to None.</span>
+<span class="sd">            fit_mode (str, optional): The fit mode to use for diffraction calculation (&#39;cmaes&#39; or &#39;mcmc&#39;). Defaults to &#39;cmaes&#39;.</span>
+<span class="sd">            best_fit (array-like, optional): The best fit Arguments obtained from the fitter. Defaults to None.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            corrected_intensity (array-like): A 2D array of floats containing the corrected intensity.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">fit_mode</span> <span class="o">==</span> <span class="s1">&#39;cmaes&#39;</span><span class="p">:</span>
+            <span class="n">corrected_intensity</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">TrapezoidDiffraction</span><span class="o">.</span><span class="n">correct_form_factor_intensity</span><span class="p">(</span><span class="n">qys</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">qys</span><span class="p">,</span> <span class="n">qzs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">qzs</span><span class="p">,</span> <span class="n">fitparams</span><span class="o">=</span><span class="n">params</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">fit_mode</span> <span class="o">==</span> <span class="s1">&#39;mcmc&#39;</span><span class="p">:</span>
+            <span class="n">corrected_intensity</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">TrapezoidDiffraction</span><span class="o">.</span><span class="n">correct_form_factor_intensity</span><span class="p">(</span><span class="n">qys</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">qys</span><span class="p">,</span> <span class="n">qzs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">qzs</span><span class="p">,</span> <span class="n">fitparams</span><span class="o">=</span><span class="n">params</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">from_fitter</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">corrected_intensity</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">corrected_intensity</span></div>
+
+<div class="viewcode-block" id="StackedTrapezoidSimulation.set_from_fitter"><a class="viewcode-back" href="../../../cdsaxs.simulations.html#cdsaxs.simulations.stacked_trapezoid.StackedTrapezoidSimulation.set_from_fitter">[docs]</a>    <span class="k">def</span> <span class="nf">set_from_fitter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">from_fitter</span><span class="p">,</span> <span class="n">best_fit_cmaes_df</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Sets the from_fitter attribute and updates the geometry object accordingly.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            from_fitter (bool): Indicates if the simulation is called from the fitter.</span>
+<span class="sd">            best_fit_cmaes_df (pd.dataframe): The best fit Arguments obtained from the CMAES.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">TrapezoidGeometry</span><span class="o">.</span><span class="n">set_initial_guess_dataframe</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">from_fitter</span> <span class="o">=</span> <span class="n">from_fitter</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">TrapezoidGeometry</span><span class="o">.</span><span class="n">from_fitter</span> <span class="o">=</span> <span class="n">from_fitter</span>
+
+        <span class="c1"># for setting the best fit Arguments obtained from CMAES for MCMC calculations</span>
+        <span class="k">if</span> <span class="n">best_fit_cmaes_df</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">TrapezoidGeometry</span><span class="o">.</span><span class="n">set_initial_guess_dataframe</span><span class="p">(</span><span class="n">best_fit_cmaes_df</span><span class="p">)</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">geometry</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the geometry object for the stacked trapezoids.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            TrapezoidGeometry (StackedTrapezoidGeometry): The geometry object for the stacked trapezoids.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">TrapezoidGeometry</span></div>
+
+
+<div class="viewcode-block" id="StackedTrapezoidGeometry"><a class="viewcode-back" href="../../../cdsaxs.simulations.html#cdsaxs.simulations.stacked_trapezoid.StackedTrapezoidGeometry">[docs]</a><span class="k">class</span> <span class="nc">StackedTrapezoidGeometry</span><span class="p">(</span><span class="n">Geometry</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A class representing the geometry of stacked trapezoids for simulations.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        xp (module): The numpy-like module to use for array operations.</span>
+<span class="sd">        from_fitter (bool): Flag indicating whether the geometry is created from a fitter.</span>
+<span class="sd">        initial_guess (dict): Dictionary containing the initial guess values for the geometry.</span>
+<span class="sd">        initial_guess_dataframe (DataFrame): DataFrame containing the initial guess values for the geometry.</span>
+<span class="sd">        symmetric (bool): Flag indicating whether the trapezoids are symmetric.</span>
+
+<span class="sd">    Methods:</span>
+<span class="sd">        calculate_ycoords(height, langle, rangle, y1, y2):</span>
+<span class="sd">            Calculate y1 and y2 coordinates for each trapezoid.</span>
+<span class="sd">        calculate_shift(height, langle):</span>
+<span class="sd">            Calculate how much the trapezoids are shifted in the z direction.</span>
+<span class="sd">        convert_to_dataframe(fitparams):</span>
+<span class="sd">            Convert the fitparams to a DataFrame based on the initial guess DataFrame.</span>
+<span class="sd">        rescale_fitparams(fitparams_df):</span>
+<span class="sd">            Rescale the Gaussian distributed values obtained from the fitter to the actual values.</span>
+<span class="sd">        check_physical_validity(rescaled_fitparams_df):</span>
+<span class="sd">            Check if the values obtained from the fitter make physical sense.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xp</span><span class="o">=</span><span class="n">np</span><span class="p">,</span> <span class="n">from_fitter</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">initial_guess</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the StackedTrapezoidGeometry object.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            xp (module, optional): The numpy-like module to use for array operations. Defaults to np.</span>
+<span class="sd">            from_fitter (bool, optional): Flag indicating whether the geometry is created from a fitter. Defaults to False.</span>
+<span class="sd">            initial_guess (dict, optional): Dictionary containing the initial guess values for the geometry. Defaults to None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">xp</span> <span class="o">=</span> <span class="n">xp</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">from_fitter</span> <span class="o">=</span> <span class="n">from_fitter</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">initial_guess</span> <span class="o">=</span> <span class="n">initial_guess</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">initial_guess_dataframe</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">symmetric</span> <span class="o">=</span> <span class="kc">False</span>
+
+<div class="viewcode-block" id="StackedTrapezoidGeometry.set_initial_guess_dataframe"><a class="viewcode-back" href="../../../cdsaxs.simulations.html#cdsaxs.simulations.stacked_trapezoid.StackedTrapezoidGeometry.set_initial_guess_dataframe">[docs]</a>    <span class="k">def</span> <span class="nf">set_initial_guess_dataframe</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">best_fit_cmaes_df</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the initial guess values in a dataframe and put them in the attribute initial_guess_dataframe.</span>
+<span class="sd">        If the fitter is MCMC, replace the initial guess values with the best estimate obtained from CMAES.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            best_fit_cmaes_df (DataFrame, optional): The best fit Arguments obtained from the CMAES to be used by MCMC.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># handle symmetric case</span>
+        <span class="k">if</span> <span class="s1">&#39;langles&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">initial_guess</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="ow">or</span> <span class="s1">&#39;rangles&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">initial_guess</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">symmetric</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="k">if</span> <span class="s1">&#39;rangles&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">initial_guess</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">initial_guess</span><span class="p">[</span><span class="s1">&#39;rangles&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">initial_guess</span><span class="p">[</span><span class="s1">&#39;langles&#39;</span><span class="p">]</span>
+            <span class="k">elif</span> <span class="s1">&#39;langles&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">initial_guess</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">initial_guess</span><span class="p">[</span><span class="s1">&#39;langles&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">initial_guess</span><span class="p">[</span><span class="s1">&#39;rangles&#39;</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;either langles or rangles should be provided&#39;</span><span class="p">)</span>
+
+        <span class="n">modified_params</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="c1"># modify initial guess dictionary to make it suitable for dataframe</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">initial_guess</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;heights&#39;</span><span class="p">,</span> <span class="s1">&#39;langles&#39;</span><span class="p">,</span> <span class="s1">&#39;rangles&#39;</span><span class="p">]:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">[</span><span class="s1">&#39;value&#39;</span><span class="p">],</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)):</span>
+                    <span class="n">value</span><span class="p">[</span><span class="s1">&#39;value&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">value</span><span class="p">[</span><span class="s1">&#39;value&#39;</span><span class="p">]]</span>
+                <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">value</span><span class="p">[</span><span class="s1">&#39;value&#39;</span><span class="p">]):</span>
+                    <span class="n">new_key</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">key</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">}{</span><span class="n">idx</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">&quot;</span>  <span class="c1"># Create new key by removing the last character and adding the index</span>
+                    <span class="n">modified_params</span><span class="p">[</span><span class="n">new_key</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;value&#39;</span><span class="p">:</span> <span class="n">val</span><span class="p">,</span> <span class="s1">&#39;variation&#39;</span><span class="p">:</span> <span class="n">value</span><span class="p">[</span><span class="s1">&#39;variation&#39;</span><span class="p">]}</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">modified_params</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+
+        <span class="n">guess</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">modified_params</span><span class="p">)</span>
+
+        <span class="c1"># if it is MCMC, replace the initial guess values with the best estimate obtained from CMAES</span>
+        <span class="k">if</span> <span class="n">best_fit_cmaes_df</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">guess</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s1">&#39;value&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">best_fit_cmaes_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">initial_guess_dataframe</span> <span class="o">=</span> <span class="n">guess</span></div>
+
+<div class="viewcode-block" id="StackedTrapezoidGeometry.convert_to_dataframe"><a class="viewcode-back" href="../../../cdsaxs.simulations.html#cdsaxs.simulations.stacked_trapezoid.StackedTrapezoidGeometry.convert_to_dataframe">[docs]</a>    <span class="k">def</span> <span class="nf">convert_to_dataframe</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fitparams</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert the fitparams to a DataFrame based on the initial guess dataframe.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            fitparams (dictionary): Array-like containing the Arguments for the trapezoids.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            pd_fitparams (dictionary): DataFrame containing the Arguments for the trapezoids.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># extract keys from the initial guess dataframe</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">from_fitter</span><span class="p">:</span>
+            <span class="n">keys</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">initial_guess_dataframe</span><span class="o">.</span><span class="n">columns</span>
+
+            <span class="c1"># remove the keys that are not needed for the symmetric case</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">symmetric</span><span class="p">:</span>
+                <span class="n">keys</span> <span class="o">=</span> <span class="p">[</span><span class="n">key</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">keys</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">key</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;langle&#39;</span><span class="p">)]</span>
+
+            <span class="n">pd_fitparams</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">fitparams</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">keys</span><span class="p">)</span>
+            <span class="n">pd_fitparams</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rescale_fitparams</span><span class="p">(</span><span class="n">pd_fitparams</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># similar to set_initial_guess_dataframe, look at how many values there are in the given key</span>
+            <span class="c1"># if it is an array, split them</span>
+            <span class="n">modified_params</span> <span class="o">=</span> <span class="p">{}</span>
+
+            <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">fitparams</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="s1">&#39;heights&#39;</span> <span class="ow">or</span> <span class="n">key</span> <span class="o">==</span> <span class="s1">&#39;langles&#39;</span> <span class="ow">or</span> <span class="n">key</span> <span class="o">==</span> <span class="s1">&#39;rangles&#39;</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fitparams</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)):</span>
+                        <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">item</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">fitparams</span><span class="p">[</span><span class="n">key</span><span class="p">]):</span>
+                            <span class="n">new_key</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">key</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">}{</span><span class="n">idx</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">&quot;</span>
+                            <span class="n">modified_params</span><span class="p">[</span><span class="n">new_key</span><span class="p">]</span> <span class="o">=</span> <span class="n">item</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">modified_params</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">fitparams</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">modified_params</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">fitparams</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+
+            <span class="n">pd_fitparams</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">([</span><span class="n">modified_params</span><span class="p">])</span>
+
+        <span class="k">return</span> <span class="n">pd_fitparams</span></div>
+
+<div class="viewcode-block" id="StackedTrapezoidGeometry.rescale_fitparams"><a class="viewcode-back" href="../../../cdsaxs.simulations.html#cdsaxs.simulations.stacked_trapezoid.StackedTrapezoidGeometry.rescale_fitparams">[docs]</a>    <span class="k">def</span> <span class="nf">rescale_fitparams</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fitparams_df</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Rescale the Gaussian distributed values obtained from the fitter to the actual values and check if the values make physical sense.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            fitparams_df (pd.dataframe): DataFrame containing the parameters for the trapezoids.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            rescaled_fitparams_df (pd.dataframe): DataFrame containing the rescaled values of the fitparams.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">from_fitter</span><span class="p">:</span>
+            <span class="n">rescaled_fitparams_df</span> <span class="o">=</span> <span class="n">fitparams_df</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">initial_guess_dataframe</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s1">&#39;variation&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">initial_guess_dataframe</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s1">&#39;value&#39;</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">rescaled_fitparams_df</span> <span class="o">=</span> <span class="n">fitparams_df</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">check_physical_validity</span><span class="p">(</span><span class="n">rescaled_fitparams_df</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="StackedTrapezoidGeometry.check_physical_validity"><a class="viewcode-back" href="../../../cdsaxs.simulations.html#cdsaxs.simulations.stacked_trapezoid.StackedTrapezoidGeometry.check_physical_validity">[docs]</a>    <span class="k">def</span> <span class="nf">check_physical_validity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rescaled_fitparams_df</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check if the values obtained from the fitter make physical sense.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            rescaled_fitparams_df (pd.dataframe): DataFrame containing the rescaled values of the fitparams.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            rescaled_df (pd.dataframe): DataFrame containing the rescaled values of the fitparams with the values that do not make physical sense replaced by np.nan.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">rescaled_df</span> <span class="o">=</span> <span class="n">rescaled_fitparams_df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">keys</span> <span class="o">=</span> <span class="n">rescaled_fitparams_df</span><span class="o">.</span><span class="n">columns</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">key</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;height&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;y_start&#39;</span><span class="p">,</span> <span class="s1">&#39;bot_cd&#39;</span><span class="p">,</span> <span class="s1">&#39;dwx&#39;</span><span class="p">,</span> <span class="s1">&#39;dwz&#39;</span><span class="p">,</span> <span class="s1">&#39;i0&#39;</span><span class="p">,</span> <span class="s1">&#39;bkg_cste&#39;</span><span class="p">):</span>
+                <span class="n">rescaled_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">rescaled_df</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">,</span> <span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+            <span class="k">elif</span> <span class="n">key</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;rangle&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">key</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;langle&#39;</span><span class="p">):</span>
+                <span class="n">rescaled_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="n">rescaled_df</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">rescaled_df</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">),</span> <span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+
+        <span class="k">return</span> <span class="n">rescaled_df</span></div>
+
+<div class="viewcode-block" id="StackedTrapezoidGeometry.calculate_ycoords"><a class="viewcode-back" href="../../../cdsaxs.simulations.html#cdsaxs.simulations.stacked_trapezoid.StackedTrapezoidGeometry.calculate_ycoords">[docs]</a>    <span class="k">def</span> <span class="nf">calculate_ycoords</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculate y1 and y2 coordinates for each trapezoid.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            df (pd.dataframe): DataFrame containing the parameters for the trapezoids.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            (y1 (ndarray), y2 (ndarray)): Tuple of 2D arrays of y1 and y2 values.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">heights</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">like</span><span class="o">=</span><span class="s1">&#39;height&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">values</span>
+        <span class="n">langles</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">like</span><span class="o">=</span><span class="s1">&#39;langle&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">values</span>
+        <span class="n">rangles</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">like</span><span class="o">=</span><span class="s1">&#39;rangle&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">values</span>
+        <span class="n">y1</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">like</span><span class="o">=</span><span class="s1">&#39;y_start&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">values</span>
+        <span class="n">y2</span> <span class="o">=</span> <span class="n">y1</span> <span class="o">+</span> <span class="n">df</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">like</span><span class="o">=</span><span class="s1">&#39;bot_cd&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">values</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">xp</span> <span class="o">==</span> <span class="n">cp</span><span class="p">:</span>
+                <span class="n">heights</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">heights</span><span class="p">)</span>
+                <span class="n">langles</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">langles</span><span class="p">)</span>
+                <span class="n">rangles</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">rangles</span><span class="p">)</span>
+                <span class="n">y1</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">y1</span><span class="p">)</span>
+                <span class="n">y2</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">y2</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">NameError</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+        <span class="c1"># handling symmetric case</span>
+        <span class="k">if</span> <span class="n">langles</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">langles</span> <span class="o">=</span> <span class="n">rangles</span>
+        <span class="k">if</span> <span class="n">rangles</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">rangles</span> <span class="o">=</span> <span class="n">langles</span>
+
+        <span class="n">y1</span> <span class="o">=</span> <span class="n">y1</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">xp</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">langles</span><span class="p">)</span>
+        <span class="n">y2</span> <span class="o">=</span> <span class="n">y2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">xp</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">langles</span><span class="p">)</span>
+
+
+        <span class="c1"># calculate y1 and y2 for each trapezoid cumulatively using cumsum but need to preserve the first values</span>
+        <span class="c1"># /!\ for 90 degrees, tan(90deg) is infinite so height/tan(90deg) is equal to zero up to the precision of 10E-14 only</span>
+        <span class="n">y1_cumsum</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">xp</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">heights</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">xp</span><span class="o">.</span><span class="n">tan</span><span class="p">(</span><span class="n">langles</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">y2_cumsum</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">xp</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">heights</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">xp</span><span class="o">.</span><span class="n">tan</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">-</span> <span class="n">rangles</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="n">y1</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">:]</span> <span class="o">=</span> <span class="n">y1</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">:]</span> <span class="o">+</span> <span class="n">y1_cumsum</span><span class="p">[:,</span> <span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">y2</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">:]</span> <span class="o">=</span> <span class="n">y2</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">:]</span> <span class="o">+</span> <span class="n">y2_cumsum</span><span class="p">[:,</span> <span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">y1</span><span class="p">,</span> <span class="n">y2</span></div>
+
+<div class="viewcode-block" id="StackedTrapezoidGeometry.calculate_shift"><a class="viewcode-back" href="../../../cdsaxs.simulations.html#cdsaxs.simulations.stacked_trapezoid.StackedTrapezoidGeometry.calculate_shift">[docs]</a>    <span class="k">def</span> <span class="nf">calculate_shift</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculate how much the trapezoids are shifted in the z direction.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            df (pd.dataframe): DataFrame containing the parameters for the trapezoids.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            shift (ndarray): Array of calculated shift values.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">heights</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">like</span><span class="o">=</span><span class="s1">&#39;height&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">values</span>
+        <span class="n">langles</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">like</span><span class="o">=</span><span class="s1">&#39;langle&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">values</span>
+        <span class="n">rangles</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">like</span><span class="o">=</span><span class="s1">&#39;rangle&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">values</span>
+
+        <span class="c1"># handling symmetric case</span>
+        <span class="k">if</span> <span class="n">langles</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">langles</span> <span class="o">=</span> <span class="n">rangles</span>
+        
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">xp</span> <span class="o">==</span> <span class="n">cp</span><span class="p">:</span>
+                <span class="n">heights</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">heights</span><span class="p">)</span>
+                <span class="n">langles</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">langles</span><span class="p">)</span>
+                <span class="n">rangles</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">rangles</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">NameError</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+        <span class="k">if</span> <span class="n">heights</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">shift</span> <span class="o">=</span> <span class="n">heights</span><span class="p">[:]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">xp</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">langles</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="k">elif</span> <span class="n">heights</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="n">langles</span><span class="o">.</span><span class="n">shape</span><span class="p">:</span>
+            <span class="n">shift</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">xp</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">heights</span><span class="p">)</span>
+            <span class="n">height_cumsum</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">xp</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">heights</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">shift</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">:]</span> <span class="o">=</span> <span class="n">height_cumsum</span><span class="p">[:,</span> <span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Height and langle should be compatible&#39;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">shift</span></div></div>
+
+
+<div class="viewcode-block" id="StackedTrapezoidDiffraction"><a class="viewcode-back" href="../../../cdsaxs.simulations.html#cdsaxs.simulations.stacked_trapezoid.StackedTrapezoidDiffraction">[docs]</a><span class="k">class</span> <span class="nc">StackedTrapezoidDiffraction</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Class for simulating diffraction from stacked trapezoids.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">TrapezoidGeometry</span><span class="p">,</span> <span class="n">xp</span><span class="o">=</span><span class="n">np</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the StackedTrapezoidDiffraction object.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            TrapezoidGeometry: object</span>
+<span class="sd">                Object containing the geometric properties of trapezoids.</span>
+<span class="sd">            xp: module, optional</span>
+<span class="sd">                Module to use for mathematical operations. Default is numpy.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">xp</span> <span class="o">=</span> <span class="n">xp</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">TrapezoidGeometry</span> <span class="o">=</span> <span class="n">TrapezoidGeometry</span>
+
+<div class="viewcode-block" id="StackedTrapezoidDiffraction.calculate_coefficients"><a class="viewcode-back" href="../../../cdsaxs.simulations.html#cdsaxs.simulations.stacked_trapezoid.StackedTrapezoidDiffraction.calculate_coefficients">[docs]</a>    <span class="k">def</span> <span class="nf">calculate_coefficients</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">qzs</span><span class="p">,</span> <span class="n">df</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculate the coefficients needed to simulate intensities, taking into account the material through the weight parameter.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            qzs: array-like</span>
+<span class="sd">                List of qz values.</span>
+<span class="sd">            df: DataFrame containing the parameters for the trapezoids.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            coefficients: array-like</span>
+<span class="sd">                Coefficients needed to calculate the form factor.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">qzs</span> <span class="o">=</span> <span class="n">qzs</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">xp</span><span class="o">.</span><span class="n">newaxis</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">xp</span><span class="o">.</span><span class="n">newaxis</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span>
+
+        <span class="n">shift</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">TrapezoidGeometry</span><span class="o">.</span><span class="n">calculate_shift</span><span class="p">(</span><span class="n">df</span><span class="o">=</span><span class="n">df</span><span class="p">)</span>
+        
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">xp</span> <span class="o">==</span> <span class="n">cp</span><span class="p">:</span>
+                <span class="n">shift</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">shift</span><span class="p">)</span>
+                <span class="n">qzs</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">qzs</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">NameError</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+        <span class="n">coeff</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">xp</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">shift</span><span class="p">[:,</span> <span class="p">:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">xp</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span> <span class="o">*</span> <span class="n">qzs</span><span class="p">)</span>
+
+        <span class="n">weight</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;weight&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">weight</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">xp</span> <span class="o">==</span> <span class="n">cp</span><span class="p">:</span>
+                    <span class="n">weight</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">weight</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">NameError</span><span class="p">:</span>
+                <span class="k">pass</span>
+                
+            <span class="n">coeff</span> <span class="o">*=</span> <span class="n">weight</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">xp</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.</span> <span class="o">+</span> <span class="mi">1</span><span class="n">j</span><span class="p">)</span>
+
+
+        <span class="k">return</span> <span class="n">coeff</span></div>
+
+<div class="viewcode-block" id="StackedTrapezoidDiffraction.trapezoid_form_factor"><a class="viewcode-back" href="../../../cdsaxs.simulations.html#cdsaxs.simulations.stacked_trapezoid.StackedTrapezoidDiffraction.trapezoid_form_factor">[docs]</a>    <span class="k">def</span> <span class="nf">trapezoid_form_factor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">qys</span><span class="p">,</span> <span class="n">qzs</span><span class="p">,</span> <span class="n">y1</span><span class="p">,</span> <span class="n">y2</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Simulation of the form factor of a trapezoid at all qx, qz positions.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            qys, qzs: array-like</span>
+<span class="sd">                List of qy/qz at which the form factor is simulated.</span>
+<span class="sd">            y1, y2: array-like</span>
+<span class="sd">                Values of the bottom right and left position of the trapezoids.</span>
+<span class="sd">            df: DataFrame containing the parameters for the trapezoids.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            form_factor: array-like</span>
+<span class="sd">                Values of the form factor.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">heights</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">like</span><span class="o">=</span><span class="s1">&#39;height&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">values</span>
+        <span class="n">langles</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">like</span><span class="o">=</span><span class="s1">&#39;langle&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">values</span>
+        <span class="n">rangles</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">like</span><span class="o">=</span><span class="s1">&#39;rangle&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">values</span>
+
+        <span class="c1"># handling symmetric case</span>
+        <span class="k">if</span> <span class="n">langles</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">langles</span> <span class="o">=</span> <span class="n">rangles</span>
+        <span class="k">if</span> <span class="n">rangles</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">rangles</span> <span class="o">=</span> <span class="n">langles</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">xp</span> <span class="o">==</span> <span class="n">cp</span><span class="p">:</span>
+                <span class="n">heights</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">heights</span><span class="p">)</span>
+                <span class="n">langles</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">langles</span><span class="p">)</span>
+                <span class="n">rangles</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">rangles</span><span class="p">)</span>
+                <span class="n">y1</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">y1</span><span class="p">)</span>
+                <span class="n">y2</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">y2</span><span class="p">)</span>
+                <span class="n">qys</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">qys</span><span class="p">)</span>
+                <span class="n">qzs</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">qzs</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">NameError</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+
+        <span class="n">tan1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">xp</span><span class="o">.</span><span class="n">tan</span><span class="p">(</span><span class="n">langles</span><span class="p">)[:,</span> <span class="p">:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">xp</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span>
+        <span class="n">tan2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">xp</span><span class="o">.</span><span class="n">tan</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">-</span> <span class="n">rangles</span><span class="p">)[:,</span> <span class="p">:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">xp</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span>
+        <span class="n">val1</span> <span class="o">=</span> <span class="n">qys</span> <span class="o">+</span> <span class="n">tan1</span> <span class="o">*</span> <span class="n">qzs</span>
+        <span class="n">val2</span> <span class="o">=</span> <span class="n">qys</span> <span class="o">+</span> <span class="n">tan2</span> <span class="o">*</span> <span class="n">qzs</span>
+
+        <span class="k">with</span> <span class="n">np</span><span class="o">.</span><span class="n">errstate</span><span class="p">(</span><span class="n">divide</span><span class="o">=</span><span class="s1">&#39;ignore&#39;</span><span class="p">,</span> <span class="n">invalid</span><span class="o">=</span><span class="s1">&#39;ignore&#39;</span><span class="p">):</span>
+            <span class="n">form_factor</span> <span class="o">=</span> <span class="p">(</span><span class="n">tan1</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">xp</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">qys</span> <span class="o">*</span> <span class="n">y1</span><span class="p">[:,</span> <span class="p">:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">xp</span><span class="o">.</span><span class="n">newaxis</span><span class="p">])</span> <span class="o">*</span>
+                           <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">xp</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">heights</span><span class="p">[:,</span> <span class="p">:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">xp</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span> <span class="o">/</span> <span class="n">tan1</span> <span class="o">*</span> <span class="n">val1</span><span class="p">))</span> <span class="o">/</span> <span class="n">val1</span><span class="p">)</span>
+            <span class="n">form_factor</span> <span class="o">-=</span> <span class="p">(</span><span class="n">tan2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">xp</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">qys</span> <span class="o">*</span> <span class="n">y2</span><span class="p">[:,</span> <span class="p">:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">xp</span><span class="o">.</span><span class="n">newaxis</span><span class="p">])</span> <span class="o">*</span>
+                            <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">xp</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">heights</span><span class="p">[:,</span> <span class="p">:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">xp</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span> <span class="o">/</span> <span class="n">tan2</span> <span class="o">*</span> <span class="n">val2</span><span class="p">))</span> <span class="o">/</span> <span class="n">val2</span><span class="p">)</span>
+            <span class="n">form_factor</span> <span class="o">/=</span> <span class="n">qys</span>
+
+        <span class="k">return</span> <span class="n">form_factor</span></div>
+
+<div class="viewcode-block" id="StackedTrapezoidDiffraction.corrections_dwi0bk"><a class="viewcode-back" href="../../../cdsaxs.simulations.html#cdsaxs.simulations.stacked_trapezoid.StackedTrapezoidDiffraction.corrections_dwi0bk">[docs]</a>    <span class="k">def</span> <span class="nf">corrections_dwi0bk</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">intensities</span><span class="p">,</span> <span class="n">qys</span><span class="p">,</span> <span class="n">qzs</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Apply corrections to the form factor intensities.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            df: DataFrame containing the parameters for the trapezoids.</span>
+<span class="sd">            qxs, qzs: array-like</span>
+<span class="sd">                List of qx/qz at which the form factor is simulated.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            intensities_corr: array-like</span>
+<span class="sd">                Corrected form factor intensities.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">qys</span> <span class="o">=</span> <span class="n">qys</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">xp</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span>
+        <span class="n">qzs</span> <span class="o">=</span> <span class="n">qzs</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">xp</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span>
+
+        <span class="n">dw_factorx</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">like</span><span class="o">=</span><span class="s1">&#39;dwx&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+        <span class="n">dw_factorz</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">like</span><span class="o">=</span><span class="s1">&#39;dwz&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+        <span class="n">scaling</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">like</span><span class="o">=</span><span class="s1">&#39;i0&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+        <span class="n">bkg_cste</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">like</span><span class="o">=</span><span class="s1">&#39;bkg_cste&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">xp</span> <span class="o">==</span> <span class="n">cp</span><span class="p">:</span>
+                <span class="n">dw_factorx</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">dw_factorx</span><span class="p">)</span>
+                <span class="n">dw_factorz</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">dw_factorz</span><span class="p">)</span>
+                <span class="n">scaling</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">scaling</span><span class="p">)</span>
+                <span class="n">bkg_cste</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">bkg_cste</span><span class="p">)</span>
+                <span class="n">qys</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">qys</span><span class="p">)</span>
+                <span class="n">qzs</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">qzs</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">NameError</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+        <span class="n">dw_array</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">xp</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="n">qys</span> <span class="o">*</span> <span class="n">dw_factorx</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span>
+                            <span class="p">(</span><span class="n">qzs</span> <span class="o">*</span> <span class="n">dw_factorz</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+
+        <span class="n">intensities_corr</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">xp</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">intensities</span><span class="p">)</span><span class="o">.</span><span class="n">T</span> <span class="o">*</span> <span class="n">dw_array</span> <span class="o">*</span> <span class="n">scaling</span>
+                                <span class="o">+</span> <span class="n">bkg_cste</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">intensities_corr</span><span class="o">.</span><span class="n">T</span></div>
+    
+<div class="viewcode-block" id="StackedTrapezoidDiffraction.calculate_form_factor"><a class="viewcode-back" href="../../../cdsaxs.simulations.html#cdsaxs.simulations.stacked_trapezoid.StackedTrapezoidDiffraction.calculate_form_factor">[docs]</a>    <span class="k">def</span> <span class="nf">calculate_form_factor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">qys</span><span class="p">,</span> <span class="n">qzs</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculate the form factor of the stacked trapezoid at all qx, qz positions.</span>
+
+<span class="sd">        Arguments:</span>
+<span class="sd">        qys, qzs: array_like</span>
+<span class="sd">            List of qx/qz at which the form factor is simulated.</span>
+<span class="sd">        df: DataFrame containing the parameters for the trapezoids.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">        form_factor: array_like</span>
+<span class="sd">            Values of the form factor.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+
+        <span class="n">y1</span><span class="p">,</span> <span class="n">y2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">TrapezoidGeometry</span><span class="o">.</span><span class="n">calculate_ycoords</span><span class="p">(</span><span class="n">df</span><span class="o">=</span><span class="n">df</span><span class="p">)</span>
+
+        <span class="n">form_factor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">trapezoid_form_factor</span><span class="p">(</span><span class="n">qys</span><span class="o">=</span><span class="n">qys</span><span class="p">,</span> <span class="n">qzs</span><span class="o">=</span><span class="n">qzs</span><span class="p">,</span> <span class="n">y1</span><span class="o">=</span><span class="n">y1</span><span class="p">,</span> <span class="n">y2</span><span class="o">=</span><span class="n">y2</span><span class="p">,</span> <span class="n">df</span><span class="o">=</span><span class="n">df</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">form_factor</span></div>
+
+    
+<div class="viewcode-block" id="StackedTrapezoidDiffraction.correct_form_factor_intensity"><a class="viewcode-back" href="../../../cdsaxs.simulations.html#cdsaxs.simulations.stacked_trapezoid.StackedTrapezoidDiffraction.correct_form_factor_intensity">[docs]</a>    <span class="k">def</span> <span class="nf">correct_form_factor_intensity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">qys</span><span class="p">,</span> <span class="n">qzs</span><span class="p">,</span> <span class="n">fitparams</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculate the intensites using form factor and apply debye waller corrections</span>
+
+<span class="sd">        Arguments:</span>
+<span class="sd">        qys, qzs: array_like</span>
+<span class="sd">            List of qx/qz at which the form factor is simulated.</span>
+<span class="sd">        fitparams: array_like, optional</span>
+<span class="sd">            parameters returned by fitter.</span>
+<span class="sd">        fit_mode: str, optional</span>
+<span class="sd">            Method used for fitting. Default is &#39;cmaes&#39;.</span>
+<span class="sd">        best_fit: array_like, optional</span>
+<span class="sd">            Best fit obtained from fitter.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">        corrected_intensity: array_like</span>
+<span class="sd">            Corrected form factor intensity.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">fitparams_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">TrapezoidGeometry</span><span class="o">.</span><span class="n">convert_to_dataframe</span><span class="p">(</span><span class="n">fitparams</span><span class="p">)</span>
+        
+        <span class="c1">#Actual Calculations</span>
+
+        <span class="n">coeff</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">calculate_coefficients</span><span class="p">(</span><span class="n">qzs</span><span class="o">=</span><span class="n">qzs</span><span class="p">,</span> <span class="n">df</span> <span class="o">=</span> <span class="n">fitparams_df</span><span class="p">)</span>
+
+        <span class="n">form_factor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">xp</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">calculate_form_factor</span><span class="p">(</span><span class="n">qys</span><span class="o">=</span><span class="n">qys</span><span class="p">,</span> <span class="n">qzs</span><span class="o">=</span><span class="n">qzs</span><span class="p">,</span> <span class="n">df</span><span class="o">=</span><span class="n">fitparams_df</span><span class="p">)</span> <span class="o">*</span> <span class="n">coeff</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="n">form_factor_intensity</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">xp</span><span class="o">.</span><span class="n">absolute</span><span class="p">(</span><span class="n">form_factor</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span>
+    
+        <span class="n">corrected_intensity</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">corrections_dwi0bk</span><span class="p">(</span><span class="n">intensities</span><span class="o">=</span><span class="n">form_factor_intensity</span><span class="p">,</span> <span class="n">qys</span><span class="o">=</span><span class="n">qys</span><span class="p">,</span> <span class="n">qzs</span><span class="o">=</span><span class="n">qzs</span><span class="p">,</span> <span class="n">df</span><span class="o">=</span><span class="n">fitparams_df</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">corrected_intensity</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Nischal Dhungana.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

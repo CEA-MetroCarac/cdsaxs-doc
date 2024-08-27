@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>cdsaxs.residual &mdash; cdsaxs v0.0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/sphinx_highlight.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            cdsaxs
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">User Guide:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../introduction.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../introduction.html#installation">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../introduction.html#background">Background</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">Api reference</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">For Developers:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../for_developpers.html">Setting Up a Development Environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../for_developpers.html#project-structure">Project Structure</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../for_developpers.html#creating-a-new-simulation-model">Creating a New Simulation Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../for_developpers.html#testing">Testing</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">cdsaxs</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">cdsaxs.residual</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for cdsaxs.residual</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Optional</span>
+<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">.simulations.base</span> <span class="kn">import</span> <span class="n">Simulation</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">cupy</span> <span class="k">as</span> <span class="nn">cp</span>
+<span class="k">except</span> <span class="ne">ModuleNotFoundError</span><span class="p">:</span>
+    <span class="n">cp</span> <span class="o">=</span> <span class="n">np</span>
+
+
+
+<div class="viewcode-block" id="Residual"><a class="viewcode-back" href="../../modules.html#cdsaxs.residual.Residual">[docs]</a><span class="k">class</span> <span class="nc">Residual</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A class to calculate the residual between experimental and simulated data, used for fitness evaluation in optimization algorithms.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        mdata : numpy.ndarray</span>
+<span class="sd">            Experimental intensity data.</span>
+<span class="sd">        mfit_mode : str</span>
+<span class="sd">            Method to calculate fitness, differentiating between &#39;cmaes&#39; and &#39;mcmc&#39;.</span>
+<span class="sd">        xp : module</span>
+<span class="sd">            NumPy or CuPy module.</span>
+<span class="sd">        Simulation : Optional[&#39;Simulation&#39;]</span>
+<span class="sd">            Class to simulate the diffraction pattern (for now only StackedTrapezoidSimulation).</span>
+<span class="sd">        c : float</span>
+<span class="sd">            Empirical factor to modify the MCMC acceptance rate.</span>
+<span class="sd">        best_fit : list or None</span>
+<span class="sd">            List containing the best fit parameters obtained from the optimization algorithm (optional).</span>
+
+<span class="sd">    Methods:</span>
+<span class="sd">        __call__: Calculate the residual between experimental and simulated data.</span>
+<span class="sd">        log_error: Return the difference between experimental and simulated data using the log error.</span>
+<span class="sd">        fix_fitness_mcmc: Fix the fitness for the MCMC algorithm using the Metropolis-Hastings criterion.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">fit_mode</span><span class="o">=</span><span class="s1">&#39;cmaes&#39;</span><span class="p">,</span> <span class="n">xp</span><span class="o">=</span><span class="n">np</span><span class="p">,</span> <span class="n">Simulation</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="s1">&#39;Simulation&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">,</span> <span class="n">best_fit</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">            data : numpy.ndarray</span>
+<span class="sd">                Experimental intensity data.</span>
+<span class="sd">            fit_mode : str, optional</span>
+<span class="sd">                Method to calculate fitness, differentiating between &#39;cmaes&#39; and &#39;mcmc&#39;. Default is &#39;cmaes&#39;.</span>
+<span class="sd">            xp : module, optional</span>
+<span class="sd">                NumPy or CuPy module. Default is numpy.</span>
+<span class="sd">            Simulation : Optional[&#39;Simulation&#39;], optional</span>
+<span class="sd">                Class to simulate the diffraction pattern (for now only StackedTrapezoidSimulation). Default is None.</span>
+<span class="sd">            c : float, optional</span>
+<span class="sd">                Empirical factor to modify the MCMC acceptance rate. Default is 1e-5.</span>
+<span class="sd">            best_fit : list or None, optional</span>
+<span class="sd">                List containing the best fit parameters obtained from the optimization algorithm. Default is None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">mdata</span> <span class="o">=</span> <span class="n">data</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mfit_mode</span> <span class="o">=</span> <span class="n">fit_mode</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Simulation</span> <span class="o">=</span> <span class="n">Simulation</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">c</span> <span class="o">=</span> <span class="n">c</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">best_fit</span> <span class="o">=</span> <span class="n">best_fit</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">xp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Simulation</span><span class="o">.</span><span class="n">xp</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">Simulation</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">xp</span>
+
+
+<div class="viewcode-block" id="Residual.__call__"><a class="viewcode-back" href="../../modules.html#cdsaxs.residual.Residual.__call__">[docs]</a>    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fit_params</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculate the residual between experimental and simulated data.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">            fit_params : numpy.ndarray</span>
+<span class="sd">                population of all the variation values generated by deap ranging from -sigma to +sigma.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            numpy.ndarray or float</span>
+<span class="sd">                Residual value(s) between experimental and simulated data.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">fit_params</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">best_fit</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">qxfit</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Simulation</span><span class="o">.</span><span class="n">simulate_diffraction</span><span class="p">(</span><span class="n">params</span><span class="o">=</span><span class="n">fit_params</span><span class="p">,</span> <span class="n">fit_mode</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">mfit_mode</span><span class="p">,</span> <span class="n">best_fit</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">best_fit</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">fit_params</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">qxfit</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Simulation</span><span class="o">.</span><span class="n">simulate_diffraction</span><span class="p">(</span><span class="n">params</span><span class="o">=</span><span class="n">fit_params</span><span class="p">,</span> <span class="n">fit_mode</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">mfit_mode</span><span class="p">)</span>
+
+        <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">log_error</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mdata</span><span class="p">,</span> <span class="n">qxfit</span><span class="p">)</span>
+        
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">xp</span> <span class="o">==</span> <span class="n">cp</span><span class="p">:</span>
+                <span class="n">res</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+        <span class="k">except</span> <span class="p">(</span><span class="ne">NameError</span><span class="p">,</span> <span class="ne">AttributeError</span><span class="p">)</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mfit_mode</span> <span class="o">==</span> <span class="s1">&#39;cmaes&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">res</span>
+        
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">mfit_mode</span> <span class="o">==</span> <span class="s1">&#39;mcmc&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">fix_fitness_mcmc</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Invalid fit mode. Please choose either &#39;cmaes&#39; or &#39;mcmc&#39;.&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Residual.log_error"><a class="viewcode-back" href="../../modules.html#cdsaxs.residual.Residual.log_error">[docs]</a>    <span class="k">def</span> <span class="nf">log_error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exp_i_array</span><span class="p">,</span> <span class="n">sim_i_array</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the difference between two set of values (experimental and</span>
+<span class="sd">        simulated data), using the log error</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        exp_i_array: numpy.ndarray((n))</span>
+<span class="sd">            Experimental intensities data</span>
+<span class="sd">        sim_i_array: numpy.ndarray((n))</span>
+<span class="sd">            Simulated intensities data</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            numpy.ndarray</span>
+<span class="sd">                Difference between experimental and simulated data using the log error.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">xp</span> <span class="o">==</span> <span class="n">cp</span><span class="p">:</span>
+                <span class="n">exp_i_array</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">exp_i_array</span><span class="p">)</span>
+                <span class="n">sim_i_array</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">sim_i_array</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">NameError</span><span class="p">:</span>
+            <span class="k">pass</span>
+            
+        <span class="n">exp_i_array</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">xp</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">exp_i_array</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">xp</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="n">exp_i_array</span><span class="p">)</span>
+        
+        <span class="n">exp_i_array</span> <span class="o">=</span> <span class="n">exp_i_array</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">xp</span><span class="o">.</span><span class="n">newaxis</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span>
+        <span class="n">exp_i_array</span> <span class="o">=</span> <span class="n">exp_i_array</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">xp</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">sim_i_array</span><span class="p">)</span>
+
+        <span class="n">error</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">xp</span><span class="o">.</span><span class="n">nansum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">xp</span><span class="o">.</span><span class="n">abs</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">xp</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">exp_i_array</span><span class="p">)</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">xp</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">sim_i_array</span><span class="p">))),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="c1">#this is for normalization but we don&#39;t get the same results as the original code</span>
+        <span class="c1"># error /= self.xp.count_nonzero(~self.xp.isnan(exp_i_array), axis=1)</span>
+
+        <span class="c1">#replace the error of the population with inf if all the parameters are nan</span>
+        <span class="n">error</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">xp</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">xp</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">xp</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">sim_i_array</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">xp</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="n">error</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">error</span></div>
+
+<div class="viewcode-block" id="Residual.fix_fitness_mcmc"><a class="viewcode-back" href="../../modules.html#cdsaxs.residual.Residual.fix_fitness_mcmc">[docs]</a>    <span class="k">def</span> <span class="nf">fix_fitness_mcmc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fitness</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Metropolis-Hastings criterion: acceptance probability equal to ratio between P(new)/P(old)</span>
+<span class="sd">        where P is proportional to probability distribution we want to find</span>
+<span class="sd">        for our case we assume that probability of our parameters being the best is proportional to a Gaussian centered at fitness=0</span>
+<span class="sd">        where fitness can be log, abs, squared error, etc.</span>
+<span class="sd">        emcee expects the fitness function to return ln(P(new)), P(old) is auto-calculated</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">            fitness : float</span>
+<span class="sd">                Fitness value to be fixed.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            float</span>
+<span class="sd">                Fixed fitness value.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># empirical factor to modify mcmc acceptance rate, makes printed fitness different than actual, higher c increases acceptance rate</span>
+        <span class="k">return</span> <span class="o">-</span><span class="n">fitness</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">c</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Nischal Dhungana.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Setting Up a Development Environment &mdash; cdsaxs v0.0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="cdsaxs.simulations package" href="cdsaxs.simulations.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            cdsaxs
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">User Guide:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="introduction.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="introduction.html#installation">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="introduction.html#background">Background</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">Api reference</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">For Developers:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Setting Up a Development Environment</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#installing-from-a-git-clone">Installing from a Git Clone</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#updating-your-git-clone">Updating Your Git Clone</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="#project-structure">Project Structure</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#components">Components</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#relationships-between-components">Relationships between components</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="#creating-a-new-simulation-model">Creating a New Simulation Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#testing">Testing</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">cdsaxs</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Setting Up a Development Environment</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/for_developpers.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="setting-up-a-development-environment">
+<h1>Setting Up a Development Environment<a class="headerlink" href="#setting-up-a-development-environment" title="Permalink to this heading"></a></h1>
+<p>When developing cdsaxs or running the latest version from GitHub, the setup process differs from a standard installation via PyPI. Start by following the steps to create a Python virtual environment as outlined in the <span class="xref std std-ref">installation</span> section. Once your environment is ready, proceed with the instructions below to install from a git clone.</p>
+<section id="installing-from-a-git-clone">
+<span id="id1"></span><h2>Installing from a Git Clone<a class="headerlink" href="#installing-from-a-git-clone" title="Permalink to this heading"></a></h2>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>There is a key difference between installing a released version and installing the latest development version. Both <span class="xref std std-ref">installing from PyPI</span> and <a class="reference internal" href="#installing-from-a-git-clone"><span class="std std-ref">Installing from a Git Clone</span></a> involve using pip, but they serve different purposes. The command <code class="code docutils literal notranslate"><span class="pre">python</span> <span class="pre">-m</span> <span class="pre">pip</span> <span class="pre">install</span> <span class="pre">cdsaxs</span></code> pulls the latest stable release from PyPI.</p>
+<p>On the other hand, navigating to a git clone and running <code class="code docutils literal notranslate"><span class="pre">python</span> <span class="pre">-m</span> <span class="pre">pip</span> <span class="pre">install</span> <span class="pre">-e</span> <span class="pre">.</span></code> installs the package in “editable mode,” linking the source directory to the Python environment. This setup is ideal for development since changes in the source code are immediately reflected in the environment.</p>
+<p>For development and using the <span class="xref std std-ref">latest features from the development branch</span>, installing from a git clone is recommended. For general use or new users, the PyPI installation is simpler and more stable.</p>
+</div>
+<p>To work with the latest development version, you need to clone the cdsaxs repository. Ensure that git is installed on your system. On Linux, install git using your package manager. On Windows, several clients are available, such as <a class="reference external" href="https://gitforwindows.org/">Git for Windows</a>, <a class="reference external" href="https://desktop.github.com/">GitHub Desktop</a>, <a class="reference external" href="https://tortoisegit.org/">TortoiseGit</a>, or the git integration in your development environment.</p>
+<p>Clone the repository using the following command:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/cdsaxs/cdsaxs
+</pre></div>
+</div>
+<p>If you intend to contribute, fork the repository on GitHub first:</p>
+<ol class="arabic">
+<li><p>Log into your <a class="reference external" href="https://github.com/">GitHub</a> account.</p></li>
+<li><p>Visit the <a class="reference external" href="https://github.com/CEA-MetroCarac/cdsaxs">cdsaxs GitHub</a> page.</p></li>
+<li><p>Click on the <em>fork</em> button:</p>
+<blockquote>
+<div><figure class="align-default">
+<img alt="_images/fork.png" src="_images/fork.png" />
+</figure>
+</div></blockquote>
+</li>
+<li><p>Clone your forked repository:</p></li>
+</ol>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/your-username/cdsaxs
+</pre></div>
+</div>
+<p>For more guidance on <a class="reference external" href="https://docs.github.com/en/get-started/quickstart/fork-a-repo">forking a repository</a> or to learn git basics, explore these resources:</p>
+<ul class="simple">
+<li><p>A <a class="reference external" href="https://www.udacity.com/course/version-control-with-git--ud123">free course</a> covering Git fundamentals.</p></li>
+<li><p>A <a class="reference external" href="https://github.com/firstcontributions/first-contributions">pull request practice</a> repository.</p></li>
+<li><p>A sample <a class="reference external" href="https://docs.astropy.org/en/latest/development/workflow/development_workflow.html">development workflow</a> for contributing code.</p></li>
+</ul>
+<p>With the Python environment activated (using conda or virtualenv), navigate to the directory where you cloned cdsaxs. Start the installation with the following command (note the dot at the end, indicating the current directory):</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span class="o">(</span>cdsaxs<span class="o">)</span><span class="w"> </span>$<span class="w"> </span>python<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span>.
+</pre></div>
+</div>
+<p>This command installs cdsaxs and its dependencies in your environment.</p>
+<p>To install extra dependencies, use the same command format as you would when installing cdsaxs from PyPI:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span class="o">(</span>cdsaxs<span class="o">)</span><span class="w"> </span>$<span class="w"> </span>python<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span>.<span class="o">[</span>gpu<span class="o">]</span>
+</pre></div>
+</div>
+</section>
+<section id="updating-your-git-clone">
+<h2>Updating Your Git Clone<a class="headerlink" href="#updating-your-git-clone" title="Permalink to this heading"></a></h2>
+<p>If you’ve installed cdsaxs from a git clone, keeping it up-to-date is straightforward. Open a terminal in the cdsaxs directory and run:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>git<span class="w"> </span>pull
+</pre></div>
+</div>
+<p>Since cdsaxs was installed in “editable mode,” any changes pulled from the repository are immediately applied. However, if new dependencies are introduced, re-run the installation command to ensure all packages are up to date:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>python<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span>.
+</pre></div>
+</div>
+</section>
+</section>
+<section id="project-structure">
+<h1>Project Structure<a class="headerlink" href="#project-structure" title="Permalink to this heading"></a></h1>
+<p>To gain a clear understanding of how the code works, the design of the algorithm is illustrated with the help of a UML diagram in <code class="xref std std-numref docutils literal notranslate"><span class="pre">fig-UML</span></code>. This diagram offers a roadmap, highlighting the various components and their interactions. We will then delve deeper to explore each component’s role in the algorithm.</p>
+<section id="components">
+<h2>Components<a class="headerlink" href="#components" title="Permalink to this heading"></a></h2>
+<p><strong>Fitter:</strong></p>
+<p>This class is a crucial component of the design. It includes the <em>cmaes</em> function for estimating the best-fit parameters and the <em>mcmc</em> function for assessing the uncertainty in the fit. The class takes a simulation model and experimental data as input. When the <em>cmaes</em> function is called, it returns the best-fit parameters. Subsequently, the <em>mcmc</em> function can be invoked to provide statistical information about the best fit, including the uncertainties in the parameters.</p>
+<p><strong>Residual:</strong></p>
+<p>This class calculates the residuals between the experimental data and the model. Currently, we use the log-likelihood as the residual function, but it can be easily extended to other residual functions. The <em>Fitter</em> class calls this class and provides the relevant model. The <em>Residual</em> class then uses the model <em>simulate_diffraction</em> function to calculate the model diffraction pattern and compare it with the experimental data.</p>
+<figure class="align-center" id="id2">
+<a class="reference internal image-reference" href="_images/cdsaxs_UML.png"><img alt="_images/cdsaxs_UML.png" src="_images/cdsaxs_UML.png" style="width: 70%;" /></a>
+<figcaption>
+<p><span class="caption-text">UML diagram of the design for CD-SAXS simulation application.</span><a class="headerlink" href="#id2" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<p><strong>Interface Simulation:</strong></p>
+<p>An interface defines a contract that classes must follow, specifying a set of methods that implementing classes should have. In Python, I have chosen to use Protocol to achieve a similar effect. This is the base class for all simulation models. The functions and classes used in it should be implemented in all simulation models. This interface simplifies future model building by ensuring that simulation functions are not geometry-dependent.</p>
+<p><strong>Interface Geometry:</strong></p>
+<p>Similar to the Interface Simulation, this is the base class for all geometry models. This interface simplifies future model building by ensuring that geometry functions are not dependent on the specific simulation details.</p>
+<p><strong>Model:</strong></p>
+<p>In this UML diagram (<code class="xref std std-numref docutils literal notranslate"><span class="pre">fig-UML</span></code>), we present the implementation of the stacked trapezoid model. Central to this model is the <em>StackedTrapezoidSimulation</em> class, which is a composite class integrating <em>StackedTrapezoidGeometry</em> and <em>StackedTrapezoidDiffraction</em> classes. The <em>StackedTrapezoidGeometry</em> class handles all geometrical calculations and stores the relevant information, while the <em>StackedTrapezoidDiffraction</em> class is responsible for all diffraction-related calculations.</p>
+<p>These classes work together to simulate the physics and generate data that can be compared with experimental results. Throughout the project, additional models are being developed and will be discussed later. The stacked trapezoid model serves as a prototype, illustrating how other models will be implemented. Each model will adhere to the base interfaces <em>Simulation</em> and <em>Geometry</em>.</p>
+</section>
+<section id="relationships-between-components">
+<h2>Relationships between components<a class="headerlink" href="#relationships-between-components" title="Permalink to this heading"></a></h2>
+<p>This structure is designed to simulate and analyze diffraction patterns using a modular approach. At its core, the system comprises several key components: the <em>Fitter</em>, <em>Residual</em>, and interfaces for <em>Simulation</em> and <em>Geometry</em>, along with specific model implementations like the <em>StackedTrapezoidSimulation</em>. The <em>Fitter</em> class orchestrates the fitting process by using the <em>cmaes</em> function to estimate the best-fit parameters and the <em>mcmc</em> function to assess the uncertainty in the fit. It takes in a model and experimental data, utilizing the <em>Residual</em> class to compute the difference between the experimental data and the model simulated data. The <em>Residual</em> class leverages the model <em>simulate_diffraction</em> function to generate the diffraction pattern, which it then compares with the experimental data.</p>
+<p>The model, meaning specific implementations of the interfaces, is designed to operate independently, allowing users to utilize a particular model for simulations without needing to engage with the fitting component. This autonomous functionality ensures that users can easily perform simulations solely with the model of their choice. This design choice enhances flexibility and usability, as it decouples the simulation process from the fitting procedures, making it more accessible for users who may only need to run simulations. The usefulness and implications of this design choice will be discussed shortly.</p>
+</section>
+</section>
+<section id="creating-a-new-simulation-model">
+<h1>Creating a New Simulation Model<a class="headerlink" href="#creating-a-new-simulation-model" title="Permalink to this heading"></a></h1>
+<p>This section provides guidelines on how to develop a new simulation model that adheres to the established protocol. The protocol ensures compatibility between your simulation model and the fitter class, enabling seamless integration and functionality.</p>
+<p>The protocol consists of a set of methods and properties that your <cite>Simulation</cite> and <cite>Geometry</cite> classes must implement. These classes form the core of your simulation model, handling the setup, execution, and data management for your simulations.</p>
+<ol class="arabic">
+<li><p><strong>Geometry Class</strong></p>
+<p>The <cite>Geometry</cite> class is responsible for defining the shape and structure of the system being simulated. It includes methods for converting simulation parameters into a structured format that can be used by the simulation engine.</p>
+<ul class="simple">
+<li><p><strong>convert_to_dataframe(fitparams)</strong>: This method takes a list of fitting parameters (fitparams) and converts them into a pandas DataFrame. This DataFrame should be structured based on the initial guess values provided by the user.</p>
+<ul>
+<li><p><strong>Parameters</strong>:
+- <cite>fitparams (list)</cite>: Array containing the parameters returned by the fitter.</p></li>
+<li><p><strong>Returns</strong>:
+- <cite>pandas.DataFrame</cite>: A DataFrame containing the parameters in a readable format.</p></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><strong>Simulation Class</strong></p>
+<p>The <cite>Simulation</cite> class orchestrates the simulation process. It uses the <cite>Geometry</cite> class to manage system structure and executes the core simulation logic.</p>
+<ul class="simple">
+<li><p><strong>geometry (property)</strong>: This property returns an instance of the <cite>Geometry</cite> class, providing access to the geometric data of the system.</p></li>
+<li><p><strong>set_from_fitter(from_fitter)</strong>: This method configures the simulation to recognize that the incoming data originates from a fitter object. It should also initialize necessary components, such as saving the initial guess to a DataFrame.</p>
+<ul>
+<li><p><strong>Parameters</strong>:
+- <cite>from_fitter (bool)</cite>: Indicates whether the simulation is being driven by a fitter.</p></li>
+</ul>
+</li>
+<li><p><strong>simulate_diffraction(fitparams=None, fit_mode=’cmaes’, best_fit=None)</strong>: This method performs the actual simulation, generating the diffraction pattern or other relevant output based on the provided fitting parameters.</p>
+<ul>
+<li><p><strong>Parameters</strong>:
+- <cite>fitparams (list, optional)</cite>: Parameters for the simulation, typically obtained from a fitter.
+- <cite>fit_mode (str, optional)</cite>: Specifies the fitting method used (‘cmaes’ or ‘mcmc’).
+- <cite>best_fit (array-like, optional)</cite>: The best-fitting parameters obtained from the fitter.</p></li>
+<li><p><strong>Raises</strong>:
+- <cite>NotImplementedError</cite>: If the method is not implemented in the derived class.</p></li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+<p>To develop a new model, you need to create classes that inherit from the <cite>Simulation</cite> and <cite>Geometry</cite> protocols and implement all required methods. Here’s how to approach this:</p>
+<ol class="arabic">
+<li><p><strong>Define the Geometry</strong></p>
+<p>Create a class that implements the <cite>Geometry</cite> protocol. This class should define the specific geometric properties of the system being simulated. For example, in a model of stacked trapezoids, this class would define the dimensions, angles, and positions of the trapezoids.</p>
+<p>Implement the <cite>convert_to_dataframe</cite> method to organize the input parameters into a structured format suitable for the simulation. This method is crucial for ensuring that the parameters can be easily interpreted and manipulated by the <cite>Fitter</cite> class.</p>
+</li>
+<li><p><strong>Create the Simulation Class</strong></p>
+<p>Your simulation class should inherit from the <cite>Simulation</cite> protocol. This class is where the core logic of your simulation resides. It should use the geometric data from the <cite>Geometry</cite> class to set up and run the simulation.</p>
+<p>Ensure that the <cite>simulate_diffraction</cite> method is implemented to perform the simulation. Depending on the complexity of your model, this method might involve extensive calculations or integrations.</p>
+</li>
+<li><p><strong>Integration with the Fitter</strong></p>
+<p>If your simulation will be used in conjunction with a fitter (e.g., for parameter optimization), make sure to implement the <cite>set_from_fitter</cite> method. This will enable your simulation to correctly handle data provided by the fitter and return results in a format that the fitter can use.</p>
+</li>
+</ol>
+<p>By following these guidelines, you can develop a new simulation model that integrates smoothly with the existing framework. The key is to ensure that all required methods and properties are properly implemented, allowing your model to function seamlessly within the larger simulation and fitting ecosystem.
+For getting concrete examples, you can refer to the existing models in the <cite>cdsaxs</cite> package, such as the Stacked Trapezoid and Strong Castle models.</p>
+</section>
+<section id="testing">
+<h1>Testing<a class="headerlink" href="#testing" title="Permalink to this heading"></a></h1>
+<p>Pytest is used for testing the codebase. The tests are located in the <cite>tests</cite> directory and are organized by module. When adding new features or modifying existing code,
+it is essential to write tests and check that the existing tests pass.</p>
+<p>To run the tests, navigate to the root directory of the project and execute the following command:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span class="o">(</span>cdsaxs<span class="o">)</span><span class="w"> </span>$<span class="w"> </span>pytest
+</pre></div>
+</div>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="cdsaxs.simulations.html" class="btn btn-neutral float-left" title="cdsaxs.simulations package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Nischal Dhungana.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

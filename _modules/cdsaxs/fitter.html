@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>cdsaxs.fitter &mdash; cdsaxs v0.0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/sphinx_highlight.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            cdsaxs
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">User Guide:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../introduction.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../introduction.html#installation">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../introduction.html#background">Background</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">Api reference</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">For Developers:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../for_developpers.html">Setting Up a Development Environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../for_developpers.html#project-structure">Project Structure</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../for_developpers.html#creating-a-new-simulation-model">Creating a New Simulation Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../for_developpers.html#testing">Testing</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">cdsaxs</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">cdsaxs.fitter</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for cdsaxs.fitter</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot; This module contains the Fitter class, which is designed to fit the cdsaxs experimental data using the CMA-ES (Covariance Matrix Adaptation Evolution Strategy)</span>
+<span class="sd">    and then do a statstical analysis of the best fit parameters using the MCMC (Markov Chain Monte Carlo) algorithm. </span>
+
+<span class="sd">    Classes:</span>
+<span class="sd">        Fitter: A class that fits the cdsaxs experimental data using the CMA-ES and MCMC algorithms.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TYPE_CHECKING</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">deque</span>
+<span class="kn">from</span> <span class="nn">random</span> <span class="kn">import</span> <span class="n">randrange</span>
+<span class="kn">import</span> <span class="nn">deap.base</span> <span class="k">as</span> <span class="nn">dbase</span>
+<span class="kn">from</span> <span class="nn">deap</span> <span class="kn">import</span> <span class="n">creator</span><span class="p">,</span> <span class="n">tools</span><span class="p">,</span> <span class="n">cma</span>
+<span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">stats</span>
+<span class="kn">import</span> <span class="nn">emcee</span>
+<span class="kn">import</span> <span class="nn">corner</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">cupy</span> <span class="k">as</span> <span class="nn">cp</span>
+<span class="k">except</span> <span class="ne">ModuleNotFoundError</span><span class="p">:</span>
+    <span class="n">cp</span> <span class="o">=</span> <span class="n">np</span>
+
+<span class="kn">from</span> <span class="nn">.residual</span> <span class="kn">import</span> <span class="n">Residual</span>
+
+
+<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">.simulations.base</span> <span class="kn">import</span> <span class="n">Simulation</span>
+
+<span class="n">creator</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="s1">&#39;FitnessMin&#39;</span><span class="p">,</span> <span class="n">dbase</span><span class="o">.</span><span class="n">Fitness</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mf">1.</span><span class="p">,))</span>  <span class="c1"># to minim. fitness</span>
+<span class="n">creator</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="s1">&#39;Individual&#39;</span><span class="p">,</span> <span class="nb">list</span><span class="p">,</span> <span class="n">fitness</span><span class="o">=</span><span class="n">creator</span><span class="o">.</span><span class="n">FitnessMin</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="Fitter"><a class="viewcode-back" href="../../modules.html#cdsaxs.fitter.Fitter">[docs]</a><span class="k">class</span> <span class="nc">Fitter</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This class is designed to fit the cdsaxs experimental data using the CMA-ES (Covariance Matrix Adaptation Evolution Strategy) and then do a statstical analysis</span>
+<span class="sd">    of the best fit parameters using the MCMC (Markov Chain Monte Carlo) algorithm. It takes an instance of the Simulation class and fits this simulated data to the</span>
+<span class="sd">    experimental data. </span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        Simulation (Simulation): An instance of the Simulation class representing the simulated diffraction pattern.</span>
+<span class="sd">        exp_data (numpy.ndarray): Experimental diffraction data.</span>
+<span class="sd">        np (module): NumPy or CuPy module, depending on whether GPU acceleration is used.</span>
+<span class="sd">        best_fit_cmaes (list or None): List containing the best fit parameters obtained using the CMA-ES algorithm.</span>
+
+<span class="sd">    Methods:</span>
+<span class="sd">        cmaes: Perform fitting using the CMA-ES (Covariance Matrix Adaptation Evolution Strategy) algorithm.</span>
+<span class="sd">        mcmc: Give a set of statstical data on the best fit parameters using the MCMC (Markov Chain Monte Carlo) algorithm.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Simulation</span><span class="p">:</span> <span class="s1">&#39;Simulation&#39;</span><span class="p">,</span> <span class="n">exp_data</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize the Fitter class with the Simulation instance and experimental data.</span>
+<span class="sd">        </span>
+<span class="sd">        Attributes:</span>
+<span class="sd">            Simulation (Simulation): An instance of the Simulation class representing the simulated diffraction pattern.</span>
+<span class="sd">            exp_data (numpy.ndarray): Experimental diffraction data.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">Simulation</span> <span class="o">=</span> <span class="n">Simulation</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">exp_data</span> <span class="o">=</span> <span class="n">exp_data</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">xp</span> <span class="o">=</span> <span class="n">Simulation</span><span class="o">.</span><span class="n">xp</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">best_fit_cmaes</span> <span class="o">=</span> <span class="kc">None</span> <span class="c1">#set the best fit obtained from cmaes to MCMC </span>
+        
+<div class="viewcode-block" id="Fitter.set_best_fit_cmaes"><a class="viewcode-back" href="../../modules.html#cdsaxs.fitter.Fitter.set_best_fit_cmaes">[docs]</a>    <span class="k">def</span> <span class="nf">set_best_fit_cmaes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">best_fit</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the best fit parameters obtained using the CMA-ES algorithm.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            best_fit (pandas.DataFrame): The best fit parameters obtained using the CMA-ES algorithm.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">best_fit_cmaes</span> <span class="o">=</span> <span class="n">best_fit</span>
+        <span class="k">return</span> <span class="kc">None</span></div>
+
+<div class="viewcode-block" id="Fitter.cmaes"><a class="viewcode-back" href="../../modules.html#cdsaxs.fitter.Fitter.cmaes">[docs]</a>    <span class="k">def</span> <span class="nf">cmaes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sigma</span><span class="p">,</span> <span class="n">ngen</span><span class="p">,</span> <span class="n">popsize</span><span class="p">,</span> <span class="n">mu</span><span class="p">,</span> <span class="n">n_default</span><span class="p">,</span> <span class="n">restarts</span><span class="p">,</span> <span class="n">tolhistfun</span><span class="p">,</span> <span class="n">ftarget</span><span class="p">,</span>
+              <span class="n">restart_from_best</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">dir_save</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">test</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Fit experimental data using the Covariance Matrix Adaptation Evolution Strategy (CMA-ES) algorithm.</span>
+
+<span class="sd">        This method utilizes a modified version of the CMA-ES algorithm to fit experimental data.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            sigma (float): The initial standard deviation for each parameter.</span>
+<span class="sd">            ngen (int): The number of generations to run the algorithm.</span>
+<span class="sd">            popsize (int): The size of the population (number of candidate solutions) in each generation.</span>
+<span class="sd">            mu (int): The number of parents/points for recombination.</span>
+<span class="sd">            n_default (int): The number of parameters to be optimized.</span>
+<span class="sd">            restarts (int): The number of restarts allowed during the optimization process.</span>
+<span class="sd">            tolhistfun (float): The tolerance for the history of the best fitness value.</span>
+<span class="sd">            ftarget (float): The target fitness value.</span>
+<span class="sd">            restart_from_best (bool, optional): Determines whether to restart from the best individual found so far. Default is True.</span>
+<span class="sd">            verbose (bool, optional): Controls whether to print progress information during optimization. Default is True.</span>
+<span class="sd">            dir_save (str, optional): The directory to save the output. Default is None.</span>
+<span class="sd">            test (bool, optional): Controls whether to test the function and return best value instead of performing the full optimization process. If True, the function returns best value. Default is False.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            tuple: A tuple containing the best fit parameters and the corresponding fitness value.</span>
+
+<span class="sd">        Attributes:</span>
+<span class="sd">            best_fit_cmaes (list or None): List containing the best fit parameters obtained using the CMA-ES algorithm.</span>
+
+<span class="sd">        Notes:</span>
+<span class="sd">            This method is modified from deap/algorithms.py to return a list of populations instead of the final population and to incorporate additional termination criteria based on neuromorphic algorithms. The function was originally extracted from XiCam and has been modified for specific use cases.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1">#cupy or numpy</span>
+        <span class="n">xp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">xp</span>
+
+
+        <span class="k">if</span> <span class="n">dir_save</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">dir_save</span><span class="p">):</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">dir_save</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Start CMAES&quot;</span><span class="p">)</span>
+        <span class="n">toolbox</span> <span class="o">=</span> <span class="n">dbase</span><span class="o">.</span><span class="n">Toolbox</span><span class="p">()</span>
+        
+                
+        <span class="c1"># Setting Simulation attribute to match the case</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Simulation</span><span class="o">.</span><span class="n">set_from_fitter</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="c1">#declare Fitness function and register</span>
+        <span class="n">residual</span> <span class="o">=</span> <span class="n">Residual</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">exp_data</span><span class="p">,</span> <span class="n">fit_mode</span><span class="o">=</span><span class="s1">&#39;cmaes&#39;</span><span class="p">,</span> <span class="n">xp</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">xp</span><span class="p">,</span> <span class="n">Simulation</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">Simulation</span><span class="p">)</span>
+        <span class="n">toolbox</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="s1">&#39;evaluate&#39;</span><span class="p">,</span> <span class="n">residual</span><span class="p">)</span>
+        
+
+        <span class="n">halloffame</span> <span class="o">=</span> <span class="n">tools</span><span class="o">.</span><span class="n">HallOfFame</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="n">thestats</span> <span class="o">=</span> <span class="n">tools</span><span class="o">.</span><span class="n">Statistics</span><span class="p">(</span><span class="k">lambda</span> <span class="n">ind</span><span class="p">:</span> <span class="n">ind</span><span class="o">.</span><span class="n">fitness</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
+        <span class="n">thestats</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="s1">&#39;avg&#39;</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">x</span><span class="p">)[</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">x</span><span class="p">))])</span> \
+            <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">x</span><span class="p">)[</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">x</span><span class="p">))]</span><span class="o">.</span><span class="n">size</span> <span class="o">!=</span> <span class="mi">0</span> <span class="k">else</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">thestats</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="s1">&#39;std&#39;</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">x</span><span class="p">)[</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">x</span><span class="p">))])</span> \
+            <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">x</span><span class="p">)[</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">x</span><span class="p">))]</span><span class="o">.</span><span class="n">size</span> <span class="o">!=</span> <span class="mi">0</span> <span class="k">else</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">thestats</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="s1">&#39;min&#39;</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">x</span><span class="p">)[</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">x</span><span class="p">))])</span> \
+            <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">x</span><span class="p">)[</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">x</span><span class="p">))]</span><span class="o">.</span><span class="n">size</span> <span class="o">!=</span> <span class="mi">0</span> <span class="k">else</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">thestats</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="s1">&#39;max&#39;</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">x</span><span class="p">)[</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">x</span><span class="p">))])</span> \
+            <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">x</span><span class="p">)[</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">x</span><span class="p">))]</span><span class="o">.</span><span class="n">size</span> <span class="o">!=</span> <span class="mi">0</span> <span class="k">else</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">thestats</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="s1">&#39;fin&#39;</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">x</span><span class="p">)))</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">x</span><span class="p">)))</span>
+
+        <span class="c1"># thestats.register(&#39;cumtime&#39;, lambda x: time.perf_counter() - last_time)</span>
+        <span class="n">logbook</span> <span class="o">=</span> <span class="n">tools</span><span class="o">.</span><span class="n">Logbook</span><span class="p">()</span>
+        <span class="n">logbook</span><span class="o">.</span><span class="n">header</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;gen&#39;</span><span class="p">,</span> <span class="s1">&#39;nevals&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="p">(</span><span class="n">thestats</span><span class="o">.</span><span class="n">fields</span> <span class="k">if</span> <span class="n">thestats</span> <span class="k">else</span> <span class="p">[])</span>
+        <span class="n">population_list</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">popsize_default</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="mi">4</span> <span class="o">+</span> <span class="mi">3</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">n_default</span><span class="p">))</span>
+        <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;lambda_&#39;</span><span class="p">:</span> <span class="n">popsize</span> <span class="k">if</span> <span class="n">popsize</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">popsize_default</span><span class="p">}</span>
+        <span class="k">if</span> <span class="n">mu</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;mu&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">mu</span>
+        <span class="n">initial_individual</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">n_default</span>
+
+        <span class="n">morestats</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">morestats</span><span class="p">[</span><span class="s1">&#39;sigma_gen&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">morestats</span><span class="p">[</span><span class="s1">&#39;axis_ratio&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># ratio of min and max scaling at each gener.</span>
+        <span class="n">morestats</span><span class="p">[</span><span class="s1">&#39;diagD&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># scaling of each param. (eigenval of covar matrix)</span>
+        <span class="n">morestats</span><span class="p">[</span><span class="s1">&#39;ps&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="n">allbreak</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="n">n_restarts</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">restart</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">restarts</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">allbreak</span><span class="p">:</span>
+                <span class="k">break</span>
+            <span class="k">if</span> <span class="n">restart</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;lambda_&#39;</span><span class="p">]</span> <span class="o">*=</span> <span class="mi">2</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Doubled popsize&#39;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">restart_from_best</span><span class="p">:</span>
+                    <span class="n">initial_individual</span> <span class="o">=</span> <span class="n">halloffame</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">n_restarts</span> <span class="o">=</span> <span class="n">restart</span>
+
+            <span class="c1"># type of strategy: (parents, children) = (mu/mu_w, popsize), selection</span>
+            <span class="c1"># takes place among offspring only</span>
+            <span class="n">strategy</span> <span class="o">=</span> <span class="n">cma</span><span class="o">.</span><span class="n">Strategy</span><span class="p">(</span><span class="n">centroid</span><span class="o">=</span><span class="n">initial_individual</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="n">sigma</span><span class="p">,</span>
+                                    <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+            <span class="c1"># The CMA-ES One Plus Lambda algo takes a initialized parent as argument</span>
+            <span class="c1">#   parent = creator.Individual(initial_individual)</span>
+            <span class="c1">#   parent.fitness.values = toolbox.evaluate(parent)</span>
+            <span class="c1">#   strategy = cmaes.StrategyOnePlusLambda(parent=parent,</span>
+            <span class="c1">#                                          sigma=sigma, lambda_=popsize)</span>
+
+            <span class="n">lambda_</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;lambda_&#39;</span><span class="p">]</span>
+            <span class="n">toolbox</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="s1">&#39;generate&#39;</span><span class="p">,</span> <span class="n">strategy</span><span class="o">.</span><span class="n">generate</span><span class="p">,</span> <span class="n">creator</span><span class="o">.</span><span class="n">Individual</span><span class="p">)</span>
+            <span class="n">toolbox</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="s1">&#39;update&#39;</span><span class="p">,</span> <span class="n">strategy</span><span class="o">.</span><span class="n">update</span><span class="p">)</span>
+            <span class="n">maxlen</span> <span class="o">=</span> <span class="mi">10</span> <span class="o">+</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="mi">30</span> <span class="o">*</span> <span class="n">n_default</span> <span class="o">/</span> <span class="n">lambda_</span><span class="p">))</span>
+            <span class="n">last_best_fitnesses</span> <span class="o">=</span> <span class="n">deque</span><span class="p">(</span><span class="n">maxlen</span><span class="o">=</span><span class="n">maxlen</span><span class="p">)</span>
+            <span class="n">cur_gen</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="c1"># fewer generations when popsize is doubled</span>
+            <span class="c1"># (unless fixed ngen is specified)</span>
+
+            <span class="n">ngen_default</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="mi">100</span> <span class="o">+</span> <span class="mi">50</span> <span class="o">*</span> <span class="p">(</span><span class="n">n_default</span> <span class="o">+</span> <span class="mi">3</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">/</span> <span class="n">lambda_</span> <span class="o">**</span> <span class="mf">0.5</span><span class="p">)</span>
+            <span class="n">ngen_</span> <span class="o">=</span> <span class="n">ngen</span> <span class="k">if</span> <span class="n">ngen</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">ngen_default</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Iteration terminated due to </span><span class="si">{}</span><span class="s2"> criterion after </span><span class="si">{}</span><span class="s2"> gens&quot;</span>
+            <span class="k">while</span> <span class="n">cur_gen</span> <span class="o">&lt;</span> <span class="n">ngen_</span><span class="p">:</span>
+                <span class="n">cur_gen</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="c1"># Generate a new population</span>
+                <span class="n">population</span> <span class="o">=</span> <span class="n">toolbox</span><span class="o">.</span><span class="n">generate</span><span class="p">()</span>
+
+                <span class="c1"># save the population only if user wants to</span>
+                <span class="k">if</span> <span class="n">dir_save</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">population_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">population</span><span class="p">)</span>
+
+                <span class="c1"># Evaluate the individuals</span>
+                <span class="n">fitnesses</span> <span class="o">=</span> <span class="n">toolbox</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">population</span><span class="p">)</span>
+
+                <span class="k">for</span> <span class="n">ind</span><span class="p">,</span> <span class="n">fit</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">population</span><span class="p">,</span> <span class="n">fitnesses</span><span class="p">):</span>
+                    <span class="n">ind</span><span class="o">.</span><span class="n">fitness</span><span class="o">.</span><span class="n">values</span> <span class="o">=</span> <span class="p">(</span><span class="n">fit</span><span class="p">,)</span>  <span class="c1"># tuple of length 1</span>
+                <span class="n">halloffame</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">population</span><span class="p">)</span>
+                <span class="c1"># Update the strategy with the evaluated individuals</span>
+                <span class="n">toolbox</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">population</span><span class="p">)</span>
+                <span class="n">record</span> <span class="o">=</span> <span class="n">thestats</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">population</span><span class="p">)</span> <span class="k">if</span> <span class="n">stats</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="p">{}</span>
+                <span class="n">logbook</span><span class="o">.</span><span class="n">record</span><span class="p">(</span><span class="n">gen</span><span class="o">=</span><span class="n">cur_gen</span><span class="p">,</span> <span class="n">nevals</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">population</span><span class="p">),</span> <span class="o">**</span><span class="n">record</span><span class="p">)</span>
+                
+                <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="n">logbook</span><span class="o">.</span><span class="n">stream</span><span class="p">)</span>
+
+                <span class="n">axis_ratio</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">strategy</span><span class="o">.</span><span class="n">diagD</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">/</span> <span class="nb">min</span><span class="p">(</span><span class="n">strategy</span><span class="o">.</span><span class="n">diagD</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span>
+                <span class="n">morestats</span><span class="p">[</span><span class="s1">&#39;sigma_gen&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">strategy</span><span class="o">.</span><span class="n">sigma</span><span class="p">)</span>
+                <span class="n">morestats</span><span class="p">[</span><span class="s1">&#39;axis_ratio&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">axis_ratio</span><span class="p">)</span>
+                <span class="n">morestats</span><span class="p">[</span><span class="s1">&#39;diagD&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">strategy</span><span class="o">.</span><span class="n">diagD</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+                <span class="n">morestats</span><span class="p">[</span><span class="s1">&#39;ps&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">strategy</span><span class="o">.</span><span class="n">ps</span><span class="p">)</span>
+
+                <span class="n">last_best_fitnesses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">record</span><span class="p">[</span><span class="s1">&#39;min&#39;</span><span class="p">])</span>
+
+                <span class="k">if</span> <span class="n">record</span><span class="p">[</span><span class="s1">&#39;min&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="n">ftarget</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">and</span> <span class="n">record</span><span class="p">[</span><span class="s1">&#39;min&#39;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">ftarget</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                            <span class="nb">print</span><span class="p">(</span><span class="n">msg</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">&quot;ftarget&quot;</span><span class="p">,</span> <span class="n">cur_gen</span><span class="p">))</span>
+                        <span class="n">allbreak</span> <span class="o">=</span> <span class="kc">True</span>
+                        <span class="k">break</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="c1"># print(&quot;Warning: All fitness values are non-finite in generation&quot;, cur_gen)</span>
+                    <span class="k">pass</span>
+                
+
+                <span class="n">last_best_fitnesses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">record</span><span class="p">[</span><span class="s1">&#39;min&#39;</span><span class="p">])</span>
+                <span class="k">if</span> <span class="n">last_best_fitnesses</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">last_best_fitnesses</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+
+                <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">last_best_fitnesses</span><span class="p">)</span> <span class="p">):</span>
+                    <span class="n">delta</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">last_best_fitnesses</span><span class="p">)</span> <span class="o">-</span> <span class="nb">min</span><span class="p">(</span><span class="n">last_best_fitnesses</span><span class="p">)</span>
+                    <span class="n">cond3</span> <span class="o">=</span> <span class="n">delta</span> <span class="o">&lt;</span> <span class="n">tolhistfun</span>  <span class="c1"># Check if this condition is met</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">delta</span> <span class="o">=</span> <span class="kc">None</span>
+                    <span class="n">cond3</span> <span class="o">=</span> <span class="kc">False</span>  <span class="c1"># No valid fitnesses to compare, so do not terminate based on this criterion</span>
+
+                <span class="n">cond1</span> <span class="o">=</span> <span class="n">tolhistfun</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+                <span class="n">cond2</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">last_best_fitnesses</span><span class="p">)</span> <span class="o">==</span> <span class="n">last_best_fitnesses</span><span class="o">.</span><span class="n">maxlen</span>
+
+                <span class="k">if</span> <span class="n">cond1</span> <span class="ow">and</span> <span class="n">cond2</span> <span class="ow">and</span> <span class="n">cond3</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="n">msg</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">&quot;tolhistfun&quot;</span><span class="p">,</span> <span class="n">cur_gen</span><span class="p">))</span>
+                    <span class="k">break</span>
+
+            <span class="k">else</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="n">msg</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">&quot;ngen&quot;</span><span class="p">,</span> <span class="n">cur_gen</span><span class="p">))</span>
+
+        <span class="n">best_uncorr</span> <span class="o">=</span> <span class="n">halloffame</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>  <span class="c1"># np.abs(halloffame[0])</span>
+        <span class="n">best_fitness</span> <span class="o">=</span> <span class="n">halloffame</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">fitness</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">best_corr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Simulation</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">convert_to_dataframe</span><span class="p">([</span><span class="n">best_uncorr</span><span class="p">])</span>
+
+        <span class="k">if</span> <span class="n">best_corr</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1">#update best fit attribute</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">set_best_fit_cmaes</span><span class="p">(</span><span class="n">best_fit</span><span class="o">=</span><span class="n">best_corr</span><span class="p">)</span>
+
+
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">((</span><span class="s1">&#39;best&#39;</span><span class="p">,</span> <span class="n">best_uncorr</span><span class="p">,</span> <span class="n">best_fitness</span><span class="p">))</span>
+        <span class="c1"># make population dataframe, order of rows is first generation for all</span>
+        <span class="c1"># children, then second generation for all children...</span>
+        
+
+        <span class="k">if</span> <span class="n">test</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">best_corr</span>
+
+        <span class="n">fitness_arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span>
+        <span class="p">[</span><span class="n">individual</span><span class="o">.</span><span class="n">fitness</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">generation</span> <span class="ow">in</span> <span class="n">population_list</span> <span class="k">for</span> <span class="n">individual</span> <span class="ow">in</span>
+        <span class="n">generation</span><span class="p">])</span>
+
+        <span class="c1">#count how many infs in the fitness_arr</span>
+        <span class="n">n_infs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isinf</span><span class="p">(</span><span class="n">fitness_arr</span><span class="p">))</span>
+        
+        <span class="k">if</span><span class="p">(</span><span class="n">n_infs</span> <span class="o">/</span> <span class="n">fitness_arr</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mf">0.5</span><span class="p">):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Warning: More than 50</span><span class="si">% o</span><span class="s1">f your generated populations are invalid individuals. It could be because your sigma or variation is too large, resulting in invalid parameters, consider choosing them wisely.&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">dir_save</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            
+            <span class="c1">#convert in to right format</span>
+            <span class="n">population_arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span>
+            <span class="p">[</span><span class="nb">list</span><span class="p">(</span><span class="n">individual</span><span class="p">)</span> <span class="k">for</span> <span class="n">generation</span> <span class="ow">in</span> <span class="n">population_list</span> <span class="k">for</span> <span class="n">individual</span> <span class="ow">in</span>
+            <span class="n">generation</span><span class="p">])</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">save_population</span><span class="p">(</span><span class="n">population_arr</span><span class="p">,</span> <span class="n">fitness_arr</span><span class="p">,</span> <span class="n">dir_save</span><span class="p">,</span> <span class="n">fit_mode</span><span class="o">=</span><span class="s1">&#39;cmaes&#39;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">best_corr</span><span class="p">,</span> <span class="n">best_fitness</span></div>
+    
+<div class="viewcode-block" id="Fitter.mcmc_bestfit_stats"><a class="viewcode-back" href="../../modules.html#cdsaxs.fitter.Fitter.mcmc_bestfit_stats">[docs]</a>    <span class="k">def</span> <span class="nf">mcmc_bestfit_stats</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">sigma</span><span class="p">,</span> <span class="n">nsteps</span><span class="p">,</span> <span class="n">nwalkers</span><span class="p">,</span> <span class="n">gaussian_move</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">test</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">dir_save</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generate a set of statstical data on the best fit parameters using the MCMC (Markov Chain Monte Carlo) algorithm. Two kinds of options for moves to explore solution space are provided gaussian and stretch move. Default is strech move and recommended.</span>
+
+<span class="sd">        This method utilizes the emcee package&#39;s implementation of the MCMC algorithm and generates a csv file with the statistical data of the best fit parameters.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            N (int): The number of parameters to be optimized.</span>
+<span class="sd">            sigma (float or list): The initial standard deviation for each parameter. If a float is provided, it is applied to all parameters. If a list is provided, each parameter is initialized with the corresponding value.</span>
+<span class="sd">            nsteps (int): The number of MCMC steps to perform.</span>
+<span class="sd">            nwalkers (int): The number of MCMC walkers to use.</span>
+<span class="sd">            gaussian_move (bool, optional): Determines whether to use Gaussian moves for proposal distribution. If True, Gaussian moves are used. If False, stretch moves are used. Default is False.</span>
+<span class="sd">            seed (int, optional): The seed for the random number generator. If None, a random seed is generated. Default is None.</span>
+<span class="sd">            verbose (bool, optional): Controls whether to print progress information during fitting. If True, progress information is printed. Default is False.</span>
+<span class="sd">            test (bool, optional): Controls whether to test the function and return mean values instead of performing the full fitting process. If True, the function returns mean values. Default is True.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            None</span>
+
+<span class="sd">        Attributes:</span>
+<span class="sd">            best_uncorr (numpy.ndarray): The best uncorrected individual obtained from the MCMC fitting process.</span>
+<span class="sd">            best_fitness (float): The fitness value of the best individual obtained from the MCMC fitting process.</span>
+<span class="sd">            minfitness_each_gen (numpy.ndarray): The minimum fitness value at each generation during the MCMC fitting process.</span>
+<span class="sd">            Sampler (emcee.EnsembleSampler): An instance of emcee.EnsembleSampler with detailed output of the MCMC algorithm.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1">#cupy or numpy</span>
+        <span class="n">xp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">xp</span>
+
+        <span class="c1"># Setting Simulation attribute to match the case</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Simulation</span><span class="o">.</span><span class="n">set_from_fitter</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">best_fit_cmaes</span><span class="p">)</span>
+
+        <span class="c1">#declare Fitness function and register</span>
+        <span class="n">residual</span> <span class="o">=</span> <span class="n">Residual</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">exp_data</span><span class="p">,</span> <span class="n">fit_mode</span><span class="o">=</span><span class="s1">&#39;mcmc&#39;</span><span class="p">,</span> <span class="n">xp</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">xp</span><span class="p">,</span> <span class="n">Simulation</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">Simulation</span><span class="p">,</span> <span class="n">best_fit</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">best_fit_cmaes</span><span class="p">)</span>
+
+
+        <span class="k">def</span> <span class="nf">do_verbose</span><span class="p">(</span><span class="n">Sampler</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">Sampler</span><span class="p">,</span> <span class="s1">&#39;acceptance_fraction&#39;</span><span class="p">):</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Acceptance fraction: &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">Sampler</span><span class="o">.</span><span class="n">acceptance_fraction</span><span class="p">)))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Acceptance fraction: &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">([</span><span class="n">Sampler</span><span class="o">.</span><span class="n">acceptance_fraction</span> <span class="k">for</span> <span class="n">Sampler</span> <span class="ow">in</span> <span class="n">Sampler</span><span class="p">])))</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
+        
+        <span class="c1"># Empirical factor to modify MCMC acceptance rate</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="n">residual</span><span class="o">.</span><span class="n">c</span>
+        
+        <span class="c1"># Generate a random seed if none is provided</span>
+        <span class="k">if</span> <span class="n">seed</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">seed</span> <span class="o">=</span> <span class="n">randrange</span><span class="p">(</span><span class="mi">2</span> <span class="o">**</span> <span class="mi">32</span><span class="p">)</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+        
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">sigma</span><span class="p">,</span> <span class="s1">&#39;__len__&#39;</span><span class="p">):</span>
+            <span class="n">sigma</span> <span class="o">=</span> <span class="p">[</span><span class="n">sigma</span><span class="p">]</span> <span class="o">*</span> <span class="n">N</span>
+            
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> parameters&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">N</span><span class="p">))</span>
+
+        <span class="n">sigma</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">sigma</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">sigma</span><span class="p">,</span> <span class="n">cp</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+                <span class="n">sigma</span> <span class="o">=</span> <span class="n">sigma</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+        <span class="k">if</span> <span class="n">gaussian_move</span><span class="p">:</span>
+            <span class="c1"># Use Gaussian move for the proposal distribution</span>
+            <span class="n">individuals</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="o">-</span><span class="n">sigma</span><span class="p">,</span> <span class="n">sigma</span><span class="p">,</span> <span class="n">N</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nwalkers</span><span class="p">)]</span>
+            
+            <span class="n">Sampler</span> <span class="o">=</span> <span class="n">emcee</span><span class="o">.</span><span class="n">EnsembleSampler</span><span class="p">(</span><span class="n">nwalkers</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">residual</span><span class="p">,</span> <span class="n">moves</span><span class="o">=</span><span class="n">emcee</span><span class="o">.</span><span class="n">moves</span><span class="o">.</span><span class="n">GaussianMove</span><span class="p">(</span><span class="n">sigma</span><span class="p">),</span> <span class="n">pool</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">vectorize</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+            <span class="k">with</span> <span class="n">np</span><span class="o">.</span><span class="n">errstate</span><span class="p">(</span><span class="n">divide</span><span class="o">=</span><span class="s1">&#39;ignore&#39;</span><span class="p">,</span> <span class="n">invalid</span><span class="o">=</span><span class="s1">&#39;ignore&#39;</span><span class="p">):</span>    
+                <span class="n">Sampler</span><span class="o">.</span><span class="n">run_mcmc</span><span class="p">(</span><span class="n">individuals</span><span class="p">,</span> <span class="n">nsteps</span><span class="p">,</span> <span class="n">progress</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                <span class="n">do_verbose</span><span class="p">(</span><span class="n">Sampler</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+
+            <span class="n">individuals</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">()</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">sigma</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">sigma</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nwalkers</span><span class="p">)]</span>
+            <span class="n">Sampler</span> <span class="o">=</span> <span class="n">emcee</span><span class="o">.</span><span class="n">EnsembleSampler</span><span class="p">(</span><span class="n">nwalkers</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">residual</span><span class="p">,</span> <span class="n">pool</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">vectorize</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+            <span class="k">with</span> <span class="n">np</span><span class="o">.</span><span class="n">errstate</span><span class="p">(</span><span class="n">divide</span><span class="o">=</span><span class="s1">&#39;ignore&#39;</span><span class="p">,</span> <span class="n">invalid</span><span class="o">=</span><span class="s1">&#39;ignore&#39;</span><span class="p">):</span> 
+                <span class="n">Sampler</span><span class="o">.</span><span class="n">run_mcmc</span><span class="p">(</span><span class="n">individuals</span><span class="p">,</span> <span class="n">nsteps</span><span class="p">,</span> <span class="n">progress</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                <span class="n">do_verbose</span><span class="p">(</span><span class="n">Sampler</span><span class="p">)</span>
+            
+
+        <span class="c1">#Autocorelation time to find burnin steps</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">tau</span> <span class="o">=</span> <span class="n">Sampler</span><span class="o">.</span><span class="n">get_autocorr_time</span><span class="p">(</span><span class="n">tol</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+            <span class="n">burnin</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">tau</span><span class="p">))</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">burnin</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="mi">3</span> <span class="o">*</span> <span class="n">nsteps</span><span class="p">)</span>
+        
+        
+        <span class="c1"># Data processing and analysis</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="n">Sampler</span><span class="o">.</span><span class="n">get_chain</span><span class="p">(</span><span class="n">discard</span><span class="o">=</span><span class="n">burnin</span><span class="p">)</span><span class="o">.</span><span class="n">shape</span>
+
+        <span class="n">flatchain</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">Sampler</span><span class="o">.</span><span class="n">get_chain</span><span class="p">(</span><span class="n">discard</span><span class="o">=</span><span class="n">burnin</span><span class="p">),</span> <span class="n">axes</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">s</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">s</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">s</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+        <span class="n">flatlnprobability</span> <span class="o">=</span> <span class="n">Sampler</span><span class="o">.</span><span class="n">get_log_prob</span><span class="p">(</span><span class="n">discard</span><span class="o">=</span><span class="n">burnin</span><span class="p">)</span><span class="o">.</span><span class="n">transpose</span><span class="p">()</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+        <span class="n">minfitness_each_gen</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span>  <span class="o">*</span> <span class="n">Sampler</span><span class="o">.</span><span class="n">get_log_prob</span><span class="p">(</span><span class="n">discard</span><span class="o">=</span><span class="n">burnin</span><span class="p">)</span> <span class="o">*</span> <span class="n">c</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        
+        <span class="c1">#convert log probability to usual fitness</span>
+        <span class="n">flatfitness</span> <span class="o">=</span> <span class="o">-</span><span class="n">flatlnprobability</span> <span class="o">*</span> <span class="n">c</span>
+
+        <span class="c1">#find the best individual and convert it to the correct form</span>
+        <span class="n">best_index</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">flatfitness</span><span class="p">)</span>
+        <span class="n">best_fitness</span> <span class="o">=</span> <span class="n">flatfitness</span><span class="p">[</span><span class="n">best_index</span><span class="p">]</span>
+        <span class="n">best_uncorr</span> <span class="o">=</span> <span class="n">flatchain</span><span class="p">[</span><span class="n">best_index</span><span class="p">]</span>
+        <span class="n">best_corr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Simulation</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">convert_to_dataframe</span><span class="p">([</span><span class="n">best_uncorr</span><span class="p">])</span>
+
+        <span class="n">population_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Simulation</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">convert_to_dataframe</span><span class="p">(</span><span class="n">flatchain</span><span class="p">)</span>
+
+
+        <span class="n">mcmc_stats</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">do_stats</span><span class="p">(</span><span class="n">population_df</span><span class="o">.</span><span class="n">dropna</span><span class="p">())</span>
+
+        <span class="k">if</span><span class="p">(</span><span class="n">test</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">best_corr</span><span class="p">,</span> <span class="n">best_fitness</span>
+        
+        <span class="k">elif</span> <span class="n">dir_save</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">save_population</span><span class="p">(</span><span class="n">flatchain</span><span class="p">,</span> <span class="n">flatfitness</span><span class="p">,</span> <span class="n">dir_save</span><span class="p">,</span> <span class="n">fit_mode</span><span class="o">=</span><span class="s1">&#39;mcmc&#39;</span><span class="p">)</span>
+
+            <span class="c1">#save the stat data</span>
+            <span class="n">path_mcmc_stats</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dir_save</span><span class="p">,</span> <span class="s1">&#39;mcmc_stats.csv&#39;</span><span class="p">)</span>
+            <span class="n">mcmc_stats</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">path_mcmc_stats</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Saved to &#39;</span> <span class="o">+</span> <span class="n">path_mcmc_stats</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">mcmc_stats</span></div>
+
+
+<div class="viewcode-block" id="Fitter.plot_correlation"><a class="viewcode-back" href="../../modules.html#cdsaxs.fitter.Fitter.plot_correlation">[docs]</a>    <span class="k">def</span> <span class="nf">plot_correlation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">,</span> <span class="n">dir_save</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Generate a corner plot of the best fit parameters obtained from the MCMC fitting process.</span>
+
+<span class="sd">            This method utilizes the corner package to generate a corner plot of the best fit parameters obtained from the MCMC fitting process.</span>
+
+<span class="sd">            Args:</span>
+<span class="sd">                file (str): The path to the file containing the data.</span>
+<span class="sd">                dir_save (str, optional): The directory to save the output. If not provided, the plot will be displayed instead of being saved.</span>
+
+<span class="sd">            Returns:</span>
+<span class="sd">                None</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">genfromtxt</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">skip_header</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
+        <span class="c1">#read the headers for each column</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">title</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
+        
+
+        <span class="c1">#remove the last column which is the fitness value</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="p">[:,</span> <span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">title</span> <span class="o">=</span> <span class="n">title</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="c1"># get rid of columns with nan values</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)]</span>
+
+        <span class="n">figure</span> <span class="o">=</span> <span class="n">corner</span><span class="o">.</span><span class="n">corner</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="n">title</span><span class="p">,</span> <span class="n">quantiles</span><span class="o">=</span><span class="p">[</span><span class="mf">0.16</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.84</span><span class="p">],</span> <span class="n">show_titles</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">dir_save</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">figure</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dir_save</span><span class="p">,</span> <span class="s2">&quot;corner_plot.png&quot;</span><span class="p">))</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Saved to &#39;</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dir_save</span><span class="p">,</span> <span class="s1">&#39;corner_plot.png&#39;</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">figure</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Fitter.save_population"><a class="viewcode-back" href="../../modules.html#cdsaxs.fitter.Fitter.save_population">[docs]</a>    <span class="k">def</span> <span class="nf">save_population</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">population_arr</span><span class="p">,</span> <span class="n">fitness_arr</span><span class="p">,</span> <span class="n">dir_save</span><span class="p">,</span> <span class="n">fit_mode</span><span class="o">=</span><span class="s1">&#39;cmaes&#39;</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Save the population array to a csv file.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            population (numpy.ndarray): The population array to save.</span>
+<span class="sd">            dir_save (str): The directory to save the output.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            None</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">fitness_dataframe</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">fitness_arr</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;fitness&#39;</span><span class="p">])</span>
+        
+        <span class="n">population_dataframe</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Simulation</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">convert_to_dataframe</span><span class="p">(</span><span class="n">population_arr</span><span class="p">)</span>
+        
+        <span class="n">frames</span> <span class="o">=</span> <span class="p">[</span><span class="n">population_dataframe</span><span class="p">,</span> <span class="n">fitness_dataframe</span><span class="p">]</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">frames</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">fit_mode</span> <span class="o">==</span> <span class="s1">&#39;cmaes&#39;</span><span class="p">:</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;population_cmaes.csv&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;population_mcmc.csv&#39;</span>
+        
+        <span class="n">result</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dir_save</span><span class="p">,</span> <span class="n">name</span><span class="p">),</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Saved to &#39;</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dir_save</span><span class="p">,</span> <span class="n">name</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="Fitter.do_stats"><a class="viewcode-back" href="../../modules.html#cdsaxs.fitter.Fitter.do_stats">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">do_stats</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">cf</span><span class="o">=</span><span class="mf">0.99</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generate a set of statistical data on the best fit parameters obtained from the MCMC fitting process.</span>
+
+<span class="sd">        This method generates a set of statistical data on the best fit parameters obtained from the MCMC fitting process.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            df (pandas.DataFrame): The DataFrame containing the best fit parameters.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            pandas.DataFrame: A DataFrame containing the statistical data on the best fit parameters.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1">#calculate confidence interval for each parameter</span>
+        <span class="n">mean</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+        <span class="n">std</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">std</span><span class="p">()</span>
+        <span class="n">count</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+        <span class="nb">min</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
+        <span class="nb">max</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">cf</span> <span class="o">==</span> <span class="mf">0.99</span><span class="p">:</span>
+            <span class="n">z</span> <span class="o">=</span> <span class="mf">2.576</span>
+        <span class="k">elif</span> <span class="n">cf</span> <span class="o">==</span> <span class="mf">0.95</span><span class="p">:</span>
+            <span class="n">z</span> <span class="o">=</span> <span class="mf">1.96</span>
+        <span class="k">elif</span> <span class="n">cf</span> <span class="o">==</span> <span class="mf">0.90</span><span class="p">:</span>
+            <span class="n">z</span> <span class="o">=</span> <span class="mf">1.645</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">z</span> <span class="o">=</span> <span class="mf">2.576</span>
+
+        <span class="n">uncertainity</span> <span class="o">=</span> <span class="n">z</span> <span class="o">*</span> <span class="n">std</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">count</span><span class="p">)</span>
+
+        <span class="n">lower_ci</span> <span class="o">=</span> <span class="n">mean</span> <span class="o">-</span> <span class="n">uncertainity</span>
+        <span class="n">upper_ci</span> <span class="o">=</span> <span class="n">mean</span> <span class="o">+</span> <span class="n">uncertainity</span>
+
+        <span class="n">stat</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">&#39;mean&#39;</span><span class="p">:</span> <span class="n">mean</span><span class="p">,</span> <span class="s1">&#39;std&#39;</span><span class="p">:</span> <span class="n">std</span><span class="p">,</span> <span class="s1">&#39;count&#39;</span><span class="p">:</span> <span class="n">count</span><span class="p">,</span> <span class="s1">&#39;min&#39;</span><span class="p">:</span> <span class="nb">min</span><span class="p">,</span> <span class="s1">&#39;max&#39;</span><span class="p">:</span> <span class="nb">max</span><span class="p">,</span> <span class="s1">&#39;lower_ci&#39;</span><span class="p">:</span> <span class="n">lower_ci</span><span class="p">,</span> <span class="s1">&#39;upper_ci&#39;</span><span class="p">:</span> <span class="n">upper_ci</span><span class="p">,</span> <span class="s1">&#39;uncertainity&#39;</span><span class="p">:</span> <span class="n">uncertainity</span><span class="p">})</span>
+
+        <span class="k">return</span> <span class="n">stat</span></div></div>
+
+
+
+        
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Nischal Dhungana.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

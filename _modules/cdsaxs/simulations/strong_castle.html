@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>cdsaxs.simulations.strong_castle &mdash; cdsaxs v0.0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/sphinx_highlight.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            cdsaxs
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">User Guide:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction.html#installation">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction.html#background">Background</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">Api reference</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">For Developers:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../for_developpers.html">Setting Up a Development Environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../for_developpers.html#project-structure">Project Structure</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../for_developpers.html#creating-a-new-simulation-model">Creating a New Simulation Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../for_developpers.html#testing">Testing</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">cdsaxs</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">cdsaxs.simulations.strong_castle</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for cdsaxs.simulations.strong_castle</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;This module is a child class of the StackedTrapezoidSimulation class. Its purpose is to implement the </span>
+<span class="sd">    Strong Castle model which calculates the overlay.</span>
+
+<span class="sd">    Classes:</span>
+<span class="sd">        StrongCastleSimulation: This class is a child class of the StackedTrapezoidSimulation class.</span>
+<span class="sd">        StrongCastleGeometry: This class is a child class of the StackedTrapezoidGeometry class.</span>
+<span class="sd">        StrongCastleDiffraction: This class is a child class of the StackedTrapezoidDiffraction class.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+
+<span class="kn">from</span> <span class="nn">.stacked_trapezoid</span> <span class="kn">import</span> <span class="n">StackedTrapezoidSimulation</span><span class="p">,</span> <span class="n">StackedTrapezoidGeometry</span><span class="p">,</span> <span class="n">StackedTrapezoidDiffraction</span>
+
+
+
+
+<div class="viewcode-block" id="StrongCastleSimulation"><a class="viewcode-back" href="../../../cdsaxs.simulations.html#cdsaxs.simulations.strong_castle.StrongCastleSimulation">[docs]</a><span class="k">class</span> <span class="nc">StrongCastleSimulation</span><span class="p">(</span><span class="n">StackedTrapezoidSimulation</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; This class is a child class of the StackedTrapezoidSimulation class.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">qys</span><span class="p">,</span> <span class="n">qzs</span><span class="p">,</span> <span class="n">from_fitter</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">use_gpu</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">initial_guess</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; This init method modifies the parent class init method by adding the StrongCastleGeometry and StrongCastleDiffraction classes</span>
+<span class="sd">            instead of the StackedTrapezoidGeometry and StackedTrapezoidDiffraction classes.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            qys (np.ndarray): points in the y direction where form factor is calculated</span>
+<span class="sd">            qzs (_type_): points in the z direction where form factor is calculated</span>
+<span class="sd">            from_fitter (bool, optional): variable to identify if the simulation is coming from fitter or not. Defaults to False.</span>
+<span class="sd">            use_gpu (bool, optional): wether to use gpu or not. Defaults to False.</span>
+<span class="sd">            initial_guess (dictionary, optional): a dictionary containing all the parameters. Defaults to None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">qys</span><span class="p">,</span> <span class="n">qzs</span><span class="p">,</span> <span class="n">from_fitter</span><span class="o">=</span><span class="n">from_fitter</span><span class="p">,</span> <span class="n">use_gpu</span><span class="o">=</span><span class="n">use_gpu</span><span class="p">,</span> <span class="n">initial_guess</span><span class="o">=</span><span class="n">initial_guess</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">TrapezoidGeometry</span> <span class="o">=</span> <span class="n">StrongCastleGeometry</span><span class="p">(</span><span class="n">from_fitter</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">from_fitter</span><span class="p">,</span> <span class="n">initial_guess</span><span class="o">=</span><span class="n">initial_guess</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">TrapezoidDiffraction</span> <span class="o">=</span> <span class="n">StrongCastleDiffraction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">TrapezoidGeometry</span><span class="p">)</span></div>
+
+
+
+
+
+<div class="viewcode-block" id="StrongCastleGeometry"><a class="viewcode-back" href="../../../cdsaxs.simulations.html#cdsaxs.simulations.strong_castle.StrongCastleGeometry">[docs]</a><span class="k">class</span> <span class="nc">StrongCastleGeometry</span><span class="p">(</span><span class="n">StackedTrapezoidGeometry</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; This class is a child class of the StackedTrapezoidGeometry class. Several methods are modified and added to implement the Strong Castle model(notably the most important</span>
+<span class="sd">        calculate_ycoords).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xp</span><span class="o">=</span><span class="n">np</span><span class="p">,</span> <span class="n">from_fitter</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">initial_guess</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This init method is similar to the parent class, except it removes the fixed parameters `n1` and `n2`</span>
+<span class="sd">        (supposed to represent the first layer and second layer of trapezoids) from the `initial_guess` dictionary.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            xp (numpy or cupy): The numpy or cupy module.</span>
+<span class="sd">            from_fitter (bool): Indicates whether the object is created from the fitter or not.</span>
+<span class="sd">            initial_guess (dict): A dictionary containing the initial guess for the parameters.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">from_fitter</span> <span class="o">=</span> <span class="n">from_fitter</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n1</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n2</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">initial_guess</span> <span class="o">=</span> <span class="n">initial_guess</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">initial_guess</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">set_n1_n2</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">initial_guess</span><span class="p">[</span><span class="s2">&quot;n1&quot;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">initial_guess</span><span class="p">[</span><span class="s2">&quot;n2&quot;</span><span class="p">])</span>
+
+            <span class="n">initial_guess_for_fit</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">remove_fixed_params</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">initial_guess</span><span class="p">)</span>
+
+            <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">xp</span><span class="o">=</span><span class="n">xp</span><span class="p">,</span> <span class="n">from_fitter</span><span class="o">=</span><span class="n">from_fitter</span><span class="p">,</span> <span class="n">initial_guess</span><span class="o">=</span><span class="n">initial_guess_for_fit</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">xp</span><span class="o">=</span><span class="n">xp</span><span class="p">,</span> <span class="n">from_fitter</span><span class="o">=</span><span class="n">from_fitter</span><span class="p">,</span> <span class="n">initial_guess</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+    
+<div class="viewcode-block" id="StrongCastleGeometry.remove_fixed_params"><a class="viewcode-back" href="../../../cdsaxs.simulations.html#cdsaxs.simulations.strong_castle.StrongCastleGeometry.remove_fixed_params">[docs]</a>    <span class="k">def</span> <span class="nf">remove_fixed_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">initial_guess</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Remove the fixed parameters which are the number of first and second layer of trapezoids n1 and n2 from the initial_guess dictionary so that they are not fitted.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            initial_guess (dictionary): A dictionary containing the initial guess for the parameters provided by the user.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            initial_guess (dictionary): A dictionary containing the initial guess for the parameters without the fixed parameters.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1">#remove the parameters which are fixed and not be fitted from the initial_guess dictionary</span>
+        <span class="n">fixed_params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;n1&quot;</span><span class="p">,</span> <span class="s2">&quot;n2&quot;</span><span class="p">}</span>
+        <span class="n">initial_guess_for_fit</span> <span class="o">=</span> <span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="n">value</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">initial_guess</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">fixed_params</span><span class="p">}</span>
+
+        <span class="c1">#check if the number of trapezoids is equal to the number of angles in the initial_guess dictionary²</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">check_initial_guess</span><span class="p">(</span><span class="n">initial_guess_for_fit</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">initial_guess_for_fit</span></div>
+    
+<div class="viewcode-block" id="StrongCastleGeometry.set_n1_n2"><a class="viewcode-back" href="../../../cdsaxs.simulations.html#cdsaxs.simulations.strong_castle.StrongCastleGeometry.set_n1_n2">[docs]</a>    <span class="k">def</span> <span class="nf">set_n1_n2</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n1</span><span class="p">,</span> <span class="n">n2</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set self.n1 and self.n2 to the provided values.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            n1 (integer): number of trapezoids in first layer of trapezoids</span>
+<span class="sd">            n2 (integer): number of trapezoids in second layer of trapezoids</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n1</span> <span class="o">=</span> <span class="n">n1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n2</span> <span class="o">=</span> <span class="n">n2</span></div>
+
+<div class="viewcode-block" id="StrongCastleGeometry.check_initial_guess"><a class="viewcode-back" href="../../../cdsaxs.simulations.html#cdsaxs.simulations.strong_castle.StrongCastleGeometry.check_initial_guess">[docs]</a>    <span class="k">def</span> <span class="nf">check_initial_guess</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Check if the number of trapezoids  n1+n2 is equal to the number of angles in the initial_guess dictionary</span>
+
+<span class="sd">            Args:</span>
+<span class="sd">            initial_guess (dict): dictionary containing the initial guess for the parameters</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">initial_guess</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> 
+            <span class="n">langles</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;langles&quot;</span><span class="p">]</span>
+            <span class="n">rangles</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;rangles&quot;</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">langles</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">initial_guess</span><span class="p">[</span><span class="s2">&quot;langles&quot;</span><span class="p">][</span><span class="s2">&quot;value&quot;</span><span class="p">]</span>
+            <span class="n">rangles</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">initial_guess</span><span class="p">[</span><span class="s2">&quot;rangles&quot;</span><span class="p">][</span><span class="s2">&quot;value&quot;</span><span class="p">]</span>
+
+        <span class="c1">#from the initial_guess dictionary get the number of langles</span>
+        <span class="c1"># Check the number of angles provided</span>
+        <span class="k">if</span> <span class="n">langles</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">rangles</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            
+            <span class="c1"># Determine the number of angles in initial_guess</span>
+            <span class="n">n</span> <span class="o">=</span> <span class="n">langles</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">langles</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">rangles</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            
+            <span class="c1"># Verify that the number of angles matches the expected sum of trapezoids</span>
+            <span class="n">expected_n</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">n1</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">n2</span>
+            <span class="k">if</span> <span class="n">n</span> <span class="o">!=</span> <span class="n">expected_n</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Number of angles should be same as the sum of the number of trapezoids. Expected </span><span class="si">{</span><span class="n">expected_n</span><span class="si">}</span><span class="s2"> but got </span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="StrongCastleGeometry.calculate_ycoords"><a class="viewcode-back" href="../../../cdsaxs.simulations.html#cdsaxs.simulations.strong_castle.StrongCastleGeometry.calculate_ycoords">[docs]</a>    <span class="k">def</span> <span class="nf">calculate_ycoords</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This is the modified version of the calculate_ycoords method in the parent class. The two trapezoids are separated into two groups and the y coordinates are calculated</span>
+<span class="sd">        and the y coordinates of the second trapezoid are shifted by the overlay value.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            df (pandas.DataFrame): dataframe containing the trapezoid parameters</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            y1 (numpy.ndarray): y1 coordinates of the trapezoids</span>
+<span class="sd">            y2 (numpy.ndarray): y2 coordinates of the trapezoids</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1">#first trapezoid</span>
+        <span class="n">first_trapezoid_columns</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">col</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span>
+            <span class="k">if</span> <span class="nb">all</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">num</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">n1</span> <span class="k">for</span> <span class="n">num</span> <span class="ow">in</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;\d+&#39;</span><span class="p">,</span> <span class="n">col</span><span class="p">))</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;\d+&#39;</span><span class="p">,</span> <span class="n">col</span><span class="p">)</span>
+        <span class="p">]</span>
+
+        <span class="n">first_trapezoid_df</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">first_trapezoid_columns</span><span class="p">]</span>
+
+        <span class="n">first_trapezoid_y1</span><span class="p">,</span> <span class="n">first_trapezoid_y2</span>  <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">calculate_ycoords</span><span class="p">(</span><span class="n">first_trapezoid_df</span><span class="p">)</span>
+
+        <span class="c1">#Second trapezoid</span>
+        <span class="n">second_trapezoid_columns</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">col</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span>
+            <span class="k">if</span> <span class="nb">all</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">num</span><span class="p">)</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">n1</span> <span class="k">for</span> <span class="n">num</span> <span class="ow">in</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;\d+&#39;</span><span class="p">,</span> <span class="n">col</span><span class="p">))</span>
+        <span class="p">]</span>
+
+        <span class="c1">#if height is constant then add height1 to the second trapezoid columns</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">from_fitter</span> <span class="ow">and</span> <span class="n">df</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">like</span><span class="o">=</span><span class="s2">&quot;height&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">second_trapezoid_columns</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;height1&quot;</span><span class="p">)</span>
+
+        <span class="c1">#giving the second trapezoid correct parameters</span>
+        <span class="n">second_trapezoid_df</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">second_trapezoid_columns</span><span class="p">]</span>
+        <span class="n">second_trapezoid_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="s2">&quot;bot_cd&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">second_trapezoid_df</span><span class="p">[</span><span class="s2">&quot;top_cd&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+
+        <span class="n">second_trapezoid_y1</span><span class="p">,</span> <span class="n">second_trapezoid_y2</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">calculate_ycoords</span><span class="p">(</span><span class="n">second_trapezoid_df</span><span class="p">)</span>
+
+        <span class="c1">#shift the y coordinates of the second trapezoid by the overlay value</span>
+        <span class="n">midpoint_trapezoid1</span> <span class="o">=</span> <span class="p">(</span><span class="n">first_trapezoid_df</span><span class="p">[</span><span class="s1">&#39;y_start&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span> <span class="o">+</span> <span class="n">first_trapezoid_df</span><span class="p">[</span><span class="s1">&#39;bot_cd&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span>
+        <span class="n">midpoint_trapezoid2</span> <span class="o">=</span> <span class="p">(</span><span class="n">second_trapezoid_df</span><span class="p">[</span><span class="s1">&#39;y_start&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span> <span class="o">+</span> <span class="n">second_trapezoid_df</span><span class="p">[</span><span class="s1">&#39;bot_cd&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span>
+        <span class="n">translation</span> <span class="o">=</span> <span class="n">midpoint_trapezoid1</span> <span class="o">-</span> <span class="n">midpoint_trapezoid2</span><span class="c1">#overlay is defined as the difference between the midpoints of the two trapezoids so aligning the midpoints </span>
+        <span class="n">translation_with_overlay</span> <span class="o">=</span> <span class="n">translation</span> <span class="o">+</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;overlay&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+
+        <span class="c1">#translate</span>
+
+        <span class="c1">#if from fit convert in to array to avoid broadcasting error</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">from_fitter</span><span class="p">:</span>
+            <span class="n">translation_with_overlay</span> <span class="o">=</span> <span class="n">translation_with_overlay</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">xp</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">second_trapezoid_y1</span><span class="p">)</span>
+
+        <span class="n">second_trapezoid_y1</span> <span class="o">=</span> <span class="n">second_trapezoid_y1</span> <span class="o">+</span> <span class="n">translation_with_overlay</span>
+        <span class="n">second_trapezoid_y2</span> <span class="o">=</span> <span class="n">second_trapezoid_y2</span> <span class="o">+</span> <span class="n">translation_with_overlay</span>
+
+        <span class="c1">#combine</span>
+        <span class="n">y1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">(</span> <span class="p">(</span><span class="n">first_trapezoid_y1</span><span class="p">,</span> <span class="n">second_trapezoid_y1</span><span class="p">)</span> <span class="p">)</span>
+        <span class="n">y2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">(</span> <span class="p">(</span><span class="n">first_trapezoid_y2</span><span class="p">,</span> <span class="n">second_trapezoid_y2</span><span class="p">)</span> <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">y1</span> <span class="p">,</span> <span class="n">y2</span></div></div>
+
+
+<div class="viewcode-block" id="StrongCastleDiffraction"><a class="viewcode-back" href="../../../cdsaxs.simulations.html#cdsaxs.simulations.strong_castle.StrongCastleDiffraction">[docs]</a><span class="k">class</span> <span class="nc">StrongCastleDiffraction</span><span class="p">(</span><span class="n">StackedTrapezoidDiffraction</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; This class is a child class of the StackedTrapezoidDiffraction class. It modifies the correct_form_factor_intensity method to account for the two </span>
+<span class="sd">        fixed params n1 and n2 which are the number of trapezoids in the first and second layer of trapezoids respectively.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="StrongCastleDiffraction.correct_form_factor_intensity"><a class="viewcode-back" href="../../../cdsaxs.simulations.html#cdsaxs.simulations.strong_castle.StrongCastleDiffraction.correct_form_factor_intensity">[docs]</a>    <span class="k">def</span> <span class="nf">correct_form_factor_intensity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">qys</span><span class="p">,</span> <span class="n">qzs</span><span class="p">,</span> <span class="n">fitparams</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;remove the fixed parameters n1 and n2 from the fitparams dictionary and call the parent class correct_form_factor_intensity method.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            qys (np.ndarray): points in the y direction where form factor is calculated</span>
+<span class="sd">            qzs (np.ndarray): points in the z direction where form factor is calculated</span>
+<span class="sd">            fitparams (np.ndarray): a dictionary containing the parameters</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            corrected_intensity (np.ndarray): intensity of the strong castle model</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1">#remove non fitted parameters before calling the parent class method</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">TrapezoidGeometry</span><span class="o">.</span><span class="n">initial_guess</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">TrapezoidGeometry</span><span class="o">.</span><span class="n">set_n1_n2</span><span class="p">(</span><span class="n">fitparams</span><span class="p">[</span><span class="s2">&quot;n1&quot;</span><span class="p">],</span> <span class="n">fitparams</span><span class="p">[</span><span class="s2">&quot;n2&quot;</span><span class="p">])</span>
+            <span class="n">fitparams_without_fixed</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">TrapezoidGeometry</span><span class="o">.</span><span class="n">remove_fixed_params</span><span class="p">(</span><span class="n">fitparams</span><span class="p">)</span>
+            <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">correct_form_factor_intensity</span><span class="p">(</span><span class="n">qys</span><span class="p">,</span> <span class="n">qzs</span><span class="p">,</span> <span class="n">fitparams_without_fixed</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">correct_form_factor_intensity</span><span class="p">(</span><span class="n">qys</span><span class="p">,</span> <span class="n">qzs</span><span class="p">,</span> <span class="n">fitparams</span><span class="p">)</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Nischal Dhungana.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
