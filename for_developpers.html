@@ -22,6 +22,7 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="How to create a simulation Model for cdsaxs?" href="Tutorials/create_model.html" />
     <link rel="prev" title="cdsaxs.simulations package" href="cdsaxs.simulations.html" /> 
 </head>
 
@@ -50,7 +51,7 @@
 <li class="toctree-l1"><a class="reference internal" href="introduction.html#installation">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="introduction.html#background">Background</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorials.html">Tutorials</a></li>
-<li class="toctree-l1"><a class="reference internal" href="modules.html">Api reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">API reference</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">For Developers:</span></p>
 <ul class="current">
@@ -64,7 +65,10 @@
 <li class="toctree-l2"><a class="reference internal" href="#relationships-between-components">Relationships between components</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="#creating-a-new-simulation-model">Creating a New Simulation Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#creating-a-new-simulation-model">Creating a New Simulation Model</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="Tutorials/create_model.html">How to create a simulation Model for cdsaxs?</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="#testing">Testing</a></li>
 </ul>
 
@@ -223,19 +227,17 @@
 </li>
 </ol>
 <p>To develop a new model, you need to create classes that inherit from the <cite>Simulation</cite> and <cite>Geometry</cite> protocols and implement all required methods. Here’s how to approach this:</p>
-<ol class="arabic">
-<li><p><strong>Define the Geometry</strong></p>
-<p>Create a class that implements the <cite>Geometry</cite> protocol. This class should define the specific geometric properties of the system being simulated. For example, in a model of stacked trapezoids, this class would define the dimensions, angles, and positions of the trapezoids.</p>
-<p>Implement the <cite>convert_to_dataframe</cite> method to organize the input parameters into a structured format suitable for the simulation. This method is crucial for ensuring that the parameters can be easily interpreted and manipulated by the <cite>Fitter</cite> class.</p>
+<p>Look at the following tutorial to see how to implement a new model in the <cite>cdsaxs</cite> package.</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Tutorials/create_model.html">How to create a simulation Model for cdsaxs?</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="Tutorials/create_model.html#Create-the-Simulation-Class">Create the Simulation Class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Tutorials/create_model.html#Define-the-Geometry-Class">Define the Geometry Class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Tutorials/create_model.html#Separating-the-diffraction-logic-from-the-geometry">Separating the diffraction logic from the geometry</a></li>
+</ul>
 </li>
-<li><p><strong>Create the Simulation Class</strong></p>
-<p>Your simulation class should inherit from the <cite>Simulation</cite> protocol. This class is where the core logic of your simulation resides. It should use the geometric data from the <cite>Geometry</cite> class to set up and run the simulation.</p>
-<p>Ensure that the <cite>simulate_diffraction</cite> method is implemented to perform the simulation. Depending on the complexity of your model, this method might involve extensive calculations or integrations.</p>
-</li>
-<li><p><strong>Integration with the Fitter</strong></p>
-<p>If your simulation will be used in conjunction with a fitter (e.g., for parameter optimization), make sure to implement the <cite>set_from_fitter</cite> method. This will enable your simulation to correctly handle data provided by the fitter and return results in a format that the fitter can use.</p>
-</li>
-</ol>
+</ul>
+</div>
 <p>By following these guidelines, you can develop a new simulation model that integrates smoothly with the existing framework. The key is to ensure that all required methods and properties are properly implemented, allowing your model to function seamlessly within the larger simulation and fitting ecosystem.
 For getting concrete examples, you can refer to the existing models in the <cite>cdsaxs</cite> package, such as the Stacked Trapezoid and Strong Castle models.</p>
 </section>
@@ -254,6 +256,7 @@ it is essential to write tests and check that the existing tests pass.</p>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="cdsaxs.simulations.html" class="btn btn-neutral float-left" title="cdsaxs.simulations package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="Tutorials/create_model.html" class="btn btn-neutral float-right" title="How to create a simulation Model for cdsaxs?" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

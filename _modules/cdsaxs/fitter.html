@@ -48,7 +48,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../introduction.html#installation">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../introduction.html#background">Background</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../tutorials.html">Tutorials</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../modules.html">Api reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">API reference</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">For Developers:</span></p>
 <ul>
@@ -148,7 +148,7 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">Simulation</span> <span class="o">=</span> <span class="n">Simulation</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">exp_data</span> <span class="o">=</span> <span class="n">exp_data</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">xp</span> <span class="o">=</span> <span class="n">Simulation</span><span class="o">.</span><span class="n">xp</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">xp</span> <span class="o">=</span> <span class="n">Simulation</span><span class="o">.</span><span class="n">xp</span> <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">Simulation</span><span class="p">,</span> <span class="s1">&#39;xp&#39;</span><span class="p">)</span> <span class="k">else</span> <span class="n">np</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">best_fit_cmaes</span> <span class="o">=</span> <span class="kc">None</span> <span class="c1">#set the best fit obtained from cmaes to MCMC </span>
         
 <div class="viewcode-block" id="Fitter.set_best_fit_cmaes"><a class="viewcode-back" href="../../modules.html#cdsaxs.fitter.Fitter.set_best_fit_cmaes">[docs]</a>    <span class="k">def</span> <span class="nf">set_best_fit_cmaes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">best_fit</span><span class="p">):</span>

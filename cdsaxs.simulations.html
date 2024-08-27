@@ -23,7 +23,7 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Setting Up a Development Environment" href="for_developpers.html" />
-    <link rel="prev" title="Api reference" href="modules.html" /> 
+    <link rel="prev" title="API reference" href="modules.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -51,7 +51,7 @@
 <li class="toctree-l1"><a class="reference internal" href="introduction.html#installation">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="introduction.html#background">Background</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorials.html">Tutorials</a></li>
-<li class="toctree-l1"><a class="reference internal" href="modules.html">Api reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">API reference</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">For Developers:</span></p>
 <ul>
@@ -75,7 +75,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
-          <li class="breadcrumb-item"><a href="modules.html">Api reference</a></li>
+          <li class="breadcrumb-item"><a href="modules.html">API reference</a></li>
       <li class="breadcrumb-item active">cdsaxs.simulations package</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/cdsaxs.simulations.rst.txt" rel="nofollow"> View page source</a>
@@ -134,7 +134,7 @@ like saving the initial guess given by user to a dataframe.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cdsaxs.simulations.base.Simulation.simulate_diffraction">
-<span class="sig-name descname"><span class="pre">simulate_diffraction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fitparams</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fit_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cmaes'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">best_fit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdsaxs/simulations/base.html#Simulation.simulate_diffraction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cdsaxs.simulations.base.Simulation.simulate_diffraction" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">simulate_diffraction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fitparams</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">best_fit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdsaxs/simulations/base.html#Simulation.simulate_diffraction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cdsaxs.simulations.base.Simulation.simulate_diffraction" title="Permalink to this definition"></a></dt>
 <dd><p>This is a obligatory method that should be implemented by the Simulation class. It is used by Residual class.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Raises<span class="colon">:</span></dt>
@@ -601,13 +601,12 @@ If the fitter is MCMC, replace the initial guess values with the best estimate o
 
 <dl class="py method">
 <dt class="sig sig-object py" id="id7">
-<span class="sig-name descname"><span class="pre">simulate_diffraction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fit_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cmaes'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">best_fit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdsaxs/simulations/stacked_trapezoid.html#StackedTrapezoidSimulation.simulate_diffraction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id7" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">simulate_diffraction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fit_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cmaes'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdsaxs/simulations/stacked_trapezoid.html#StackedTrapezoidSimulation.simulate_diffraction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id7" title="Permalink to this definition"></a></dt>
 <dd><p>Simulates the diffraction pattern of the stacked trapezoids.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>fitparams</strong> (<em>list</em><em>, </em><em>optional</em>) – A list of floats coming from the fitter. Defaults to None.</p></li>
-<li><p><strong>fit_mode</strong> (<em>str</em><em>, </em><em>optional</em>) – The fit mode to use for diffraction calculation (‘cmaes’ or ‘mcmc’). Defaults to ‘cmaes’.</p></li>
 <li><p><strong>best_fit</strong> (<em>array-like</em><em>, </em><em>optional</em>) – The best fit Arguments obtained from the fitter. Defaults to None.</p></li>
 </ul>
 </dd>
@@ -745,7 +744,7 @@ initial_guess (dict): dictionary containing the initial guess for the parameters
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="modules.html" class="btn btn-neutral float-left" title="Api reference" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="modules.html" class="btn btn-neutral float-left" title="API reference" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
         <a href="for_developpers.html" class="btn btn-neutral float-right" title="Setting Up a Development Environment" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
