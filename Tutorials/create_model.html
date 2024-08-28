@@ -213,7 +213,7 @@ from cdsaxs.simulations.base import Simulation, Geometry
             df (DataFrame): A DataFrame containing the parameters.
         &quot;&quot;&quot;
         if self.from_fitter:
-            df = self.rescale_fit_parameters(params)
+            df = self.rescale_fitparams(params)
 
         else:
             df = pd.DataFrame(params, index=[0])
@@ -240,8 +240,8 @@ from cdsaxs.simulations.base import Simulation, Geometry
 
         return params_df_c
 
-    def rescale_fit_parameters(self, params):
-        &quot;&quot;&quot;Rescales the parameters of the cylinder.
+    def rescale_fitparams(self, params):
+        &quot;&quot;&quot;Rescales the parameters of the cylinder. Here the multiplier is hardcoded for ease but it should ideally be user input values.
 
         Args:
             df (DataFrame): A DataFrame containing the parameters.
@@ -249,9 +249,9 @@ from cdsaxs.simulations.base import Simulation, Geometry
             df (DataFrame): A DataFrame containing the rescaled parameters.
         &quot;&quot;&quot;
 
-        multiples = pd.DataFrame([[1 , 1, 10E-2]], columns=self.initial_guess_dataframe.columns)
+        multiplier = pd.DataFrame([[1 , 1, 10E-2]], columns=self.initial_guess_dataframe.columns)
         df = pd.DataFrame(params, columns=self.initial_guess_dataframe.columns)
-        df = df.multiply(multiples)
+        df = df.multiply(multiplier)
         df = df.add(self.initial_guess_dataframe)
 
         return df
@@ -370,7 +370,7 @@ Text(0, 0.5, &#39;Intensity(A.U.)&#39;)
 </div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[27]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[24]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>from cdsaxs.fitter import Fitter
@@ -391,7 +391,7 @@ print(best_fit)
 <div class="highlight"><pre>
 Iteration terminated due to ngen criterion after 100 gens
       radius     height   density
-0  49.748789  99.256512  0.014507
+0  50.148411  97.895643  0.005126
 </pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -399,7 +399,7 @@ Iteration terminated due to ngen criterion after 100 gens
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-C:\Users\ND276333\Desktop\cdsaxs_venv\cdsaxs\src\cdsaxs\fitter.py:289: RuntimeWarning: invalid value encountered in scalar divide
+/nobackup/nd276333/Workspace/cdsaxs/src/cdsaxs/fitter.py:289: RuntimeWarning: invalid value encountered in scalar divide
   if(n_infs / fitness_arr.shape[0] &gt; 0.5):
 </pre></div></div>
 </div>

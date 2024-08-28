@@ -99,12 +99,30 @@
 <span class="sd">            This is a obligatory method that should be implemented by the Geometry class.</span>
 <span class="sd">            It&#39;s job is to take the arrays of fitparams and convert them into a pandas DataFrame</span>
 <span class="sd">            based on the initial guess given by the user.</span>
-
+<span class="sd">    </span>
 <span class="sd">            Parameters:</span>
 <span class="sd">            fitparams (list): an array returned by the fitter that contains the population to be evaluated.</span>
 <span class="sd">            </span>
 <span class="sd">            returns:</span>
 <span class="sd">            df (pandas.DataFrame): a DataFrame containing the fitparams in a readable format.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="o">...</span></div>
+    
+<div class="viewcode-block" id="Geometry.rescale_fitparams"><a class="viewcode-back" href="../../../cdsaxs.simulations.html#cdsaxs.simulations.base.Geometry.rescale_fitparams">[docs]</a>    <span class="k">def</span> <span class="nf">rescale_fitparams</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fitparams</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            This is a obligatory method that should be implemented by the Geometry class.</span>
+<span class="sd">            The values incoming from the fitter are normalized in the range of -sigma to sigma they need to be rescaled.</span>
+<span class="sd">            so this method&#39;s job is to take the arrays of fitparams and rescale them based on the initial guess given by the user.</span>
+<span class="sd">            the formula used should be something like this:</span>
+<span class="sd">            rescaled_fitparams = fitparams * multiplier + initial_guess</span>
+<span class="sd">            multiplier and initial_guess are the values given by the user. if you find that a certain set of multiplier works</span>
+<span class="sd">            better you can hardcode them as well but it is not recommended as it will make the code less flexible.</span>
+<span class="sd">    </span>
+<span class="sd">            Parameters:</span>
+<span class="sd">            fitparams (list): an array returned by the fitter that contains the population to be evaluated.</span>
+<span class="sd">            </span>
+<span class="sd">            returns:</span>
+<span class="sd">            df (dataframe): an array containing the rescaled fitparams.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="o">...</span></div></div>
 

@@ -112,6 +112,22 @@ fitparams (list): an array returned by the fitter that contains the population t
 df (pandas.DataFrame): a DataFrame containing the fitparams in a readable format.</p>
 </dd></dl>
 
+<dl class="py method">
+<dt class="sig sig-object py" id="cdsaxs.simulations.base.Geometry.rescale_fitparams">
+<span class="sig-name descname"><span class="pre">rescale_fitparams</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fitparams</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdsaxs/simulations/base.html#Geometry.rescale_fitparams"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cdsaxs.simulations.base.Geometry.rescale_fitparams" title="Permalink to this definition"></a></dt>
+<dd><p>This is a obligatory method that should be implemented by the Geometry class.
+The values incoming from the fitter are normalized in the range of -sigma to sigma they need to be rescaled.
+so this method’s job is to take the arrays of fitparams and rescale them based on the initial guess given by the user.
+the formula used should be something like this:
+rescaled_fitparams = fitparams * multiplier + initial_guess
+multiplier and initial_guess are the values given by the user. if you find that a certain set of multiplier works
+better you can hardcode them as well but it is not recommended as it will make the code less flexible.</p>
+<p>Parameters:
+fitparams (list): an array returned by the fitter that contains the population to be evaluated.</p>
+<p>returns:
+df (dataframe): an array containing the rescaled fitparams.</p>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="py class">
