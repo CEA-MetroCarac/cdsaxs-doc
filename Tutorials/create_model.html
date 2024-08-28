@@ -100,7 +100,7 @@
 <h1>How to create a simulation Model for cdsaxs?<a class="headerlink" href="#How-to-create-a-simulation-Model-for-cdsaxs?" title="Permalink to this heading"></a></h1>
 <p>First let’s start by doing necessary imports (make sure that cdsaxs is installed in your environment).</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>import numpy as np
@@ -115,7 +115,7 @@ from cdsaxs.simulations.base import Simulation, Geometry
 <p>Ensure that the <code class="docutils literal notranslate"><span class="pre">simulate_diffraction</span></code> method is implemented to perform the simulation. Depending on the complexity of your model, this method might involve extensive calculations or integrations.</p>
 <p>If your simulation will be used in conjunction with a <code class="docutils literal notranslate"><span class="pre">Fitter</span></code> class, make sure to implement the <code class="docutils literal notranslate"><span class="pre">set_from_fitter</span></code> method. This will enable your simulation to correctly handle data provided by the <code class="docutils literal notranslate"><span class="pre">Fitter</span></code> and return results in a format that the <code class="docutils literal notranslate"><span class="pre">Fitter</span></code> can use.</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[20]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>class CylinderSimulation(Simulation):
@@ -180,7 +180,7 @@ from cdsaxs.simulations.base import Simulation, Geometry
 <p>Create a class that implements the <code class="docutils literal notranslate"><span class="pre">Geometry</span></code> protocol. This class should define the specific geometric properties of the system being simulated. For example, in a model of stacked trapezoids, this class would define the dimensions, angles, and positions of the trapezoids.</p>
 <p>Implement the <code class="docutils literal notranslate"><span class="pre">convert_to_dataframe</span></code> method to organize the input parameters into a structured format suitable for the simulation. This method is crucial for ensuring that the parameters can be easily interpreted and manipulated by the <code class="docutils literal notranslate"><span class="pre">Fitter</span></code> class.</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[21]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>class CylinderGeometry(Geometry):
@@ -235,8 +235,8 @@ from cdsaxs.simulations.base import Simulation, Geometry
         keys = params_df_c.columns
 
         for key in keys:
-            if params_df[key].values[0] &lt;= 0:
-                params_df_c.loc[params_df_c[key] &lt;= 0, key] = np.nan
+            if params_df[key].values[0] &lt; 0:
+                params_df_c.loc[params_df_c[key] &lt; 0, key] = np.nan
 
         return params_df_c
 
@@ -249,10 +249,13 @@ from cdsaxs.simulations.base import Simulation, Geometry
             df (DataFrame): A DataFrame containing the rescaled parameters.
         &quot;&quot;&quot;
 
-        multiplier = pd.DataFrame([[1 , 1, 10E-2]], columns=self.initial_guess_dataframe.columns)
+        multiples = np.array([5 , 5, 1])#hardcoded for now but user input values recommended
+
         df = pd.DataFrame(params, columns=self.initial_guess_dataframe.columns)
-        df = df.multiply(multiplier)
-        df = df.add(self.initial_guess_dataframe)
+
+        df = df * multiples
+
+        df = df + self.initial_guess_dataframe.loc[0]
 
         return df
 </pre></div>
@@ -263,7 +266,7 @@ from cdsaxs.simulations.base import Simulation, Geometry
 <h2>Separating the diffraction logic from the geometry<a class="headerlink" href="#Separating-the-diffraction-logic-from-the-geometry" title="Permalink to this heading"></a></h2>
 <p>The following class is to separate the diffraction logic from the geometry. This is useful when you have a complex geometry and you want to separate the geometry from the diffraction logic.</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[22]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>class CylinderDiffraction():
@@ -311,7 +314,6 @@ from cdsaxs.simulations.base import Simulation, Geometry
         radius = params[&#39;radius&#39;].values
         density = params[&#39;density&#39;].values
 
-
         height = height[..., np.newaxis]
         radius = radius[..., np.newaxis]
         density = density[..., np.newaxis]
@@ -324,16 +326,16 @@ from cdsaxs.simulations.base import Simulation, Geometry
 </pre></div>
 </div>
 </div>
-<p>Now you can use this model to simulate the diffraction and you can use the <code class="docutils literal notranslate"><span class="pre">Fitter</span></code> class to fit the simulated data to the experimental data.</p>
+<p>Now let’s generate a set of data that we can use to fit the model.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[23]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span># Example Usage
 # Define the cylinder dimensions
 radius = 50.  # in arbitrary units
 height = 100.  # in arbitrary units
-density = 10E-3  # in arbitrary units
+density = 10.  # in arbitrary units
 
 # Define the q-space grid
 qys = np.linspace(-0.1, 0.1, 100)  # qy range
@@ -354,7 +356,7 @@ plt.ylabel(&#39;Intensity(A.U.)&#39;)
 </div>
 </div>
 <div class="nboutput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[23]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
 </pre></div>
 </div>
 <div class="output_area docutils container">
@@ -369,38 +371,30 @@ Text(0, 0.5, &#39;Intensity(A.U.)&#39;)
 <img alt="../_images/Tutorials_create_model_10_1.png" src="../_images/Tutorials_create_model_10_1.png" />
 </div>
 </div>
+<p>Now we will use the generated data to simulate the diffraction and we can use the <code class="docutils literal notranslate"><span class="pre">Fitter</span></code> class to fit. We will give a initial guess that is close to the actual values. How close is determined by the domain of search fixed by your <code class="docutils literal notranslate"><span class="pre">multipliers</span></code> in <code class="docutils literal notranslate"><span class="pre">rescale_fitparams</span></code> and value of <code class="docutils literal notranslate"><span class="pre">sigma</span></code> for <code class="docutils literal notranslate"><span class="pre">cmaes</span></code> method. In this case in the condition of choosing your initial guess is that: <code class="docutils literal notranslate"><span class="pre">sigma</span> <span class="pre">*</span> <span class="pre">multipliers</span> <span class="pre">+</span> <span class="pre">initial_guess</span> <span class="pre">&lt;</span> <span class="pre">real_value</span> <span class="pre">&lt;</span> <span class="pre">sigma</span> <span class="pre">*</span> <span class="pre">multipliers</span> <span class="pre">-</span> <span class="pre">initial_guess</span></code>.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[24]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[35]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>from cdsaxs.fitter import Fitter
-Simulation2 = CylinderSimulation(qys=qys, qzs=qzs, initial_guess={&#39;radius&#39;: 50, &#39;height&#39;: 100, &#39;density&#39;: 10E-3})
+Simulation2 = CylinderSimulation(qys=qys, qzs=qzs, initial_guess={&#39;radius&#39;: 51, &#39;height&#39;: 101, &#39;density&#39;: 8})
 
 Fitter1 = Fitter(Simulation=Simulation2, exp_data=intensity)
 
-best_fit, best_fitness = Fitter1.cmaes(sigma=1, ngen=100, popsize=500, mu=10, n_default=3, restarts=0, tolhistfun=10E-5, ftarget=None, restart_from_best=True, verbose=False)
+best_fit, best_fitness = Fitter1.cmaes(sigma=1, ngen=80, popsize=300, mu=10, n_default=3, restarts=0, tolhistfun=10E-5, ftarget=None, restart_from_best=True, verbose=False)
 
 print(best_fit)
 </pre></div>
 </div>
 </div>
-<div class="nboutput docutils container">
+<div class="nboutput nblast docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-Iteration terminated due to ngen criterion after 100 gens
-      radius     height   density
-0  50.148411  97.895643  0.005126
-</pre></div></div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area stderr docutils container">
-<div class="highlight"><pre>
-/nobackup/nd276333/Workspace/cdsaxs/src/cdsaxs/fitter.py:289: RuntimeWarning: invalid value encountered in scalar divide
-  if(n_infs / fitness_arr.shape[0] &gt; 0.5):
+Iteration terminated due to ngen criterion after 80 gens
+      radius  height    density
+0  50.011961   100.0  10.069623
 </pre></div></div>
 </div>
 </section>
