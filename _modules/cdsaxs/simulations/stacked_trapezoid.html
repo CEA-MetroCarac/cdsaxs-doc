@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en">
 <head>
@@ -8,16 +10,12 @@
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css" />
 
   
-  <!--[if lt IE 9]>
-    <script src="../../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../../_static/jquery.js"></script>
-        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
-        <script src="../../../_static/doctools.js"></script>
-        <script src="../../../_static/sphinx_highlight.js"></script>
-        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+      <script src="../../../_static/jquery.js"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+      <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+      <script src="../../../_static/doctools.js"></script>
+      <script src="../../../_static/sphinx_highlight.js"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" /> 
@@ -233,13 +231,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># handle symmetric case</span>
         <span class="k">if</span> <span class="s1">&#39;langles&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">initial_guess</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="ow">or</span> <span class="s1">&#39;rangles&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">initial_guess</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">symmetric</span> <span class="o">=</span> <span class="kc">True</span>
-            <span class="k">if</span> <span class="s1">&#39;rangles&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">initial_guess</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">initial_guess</span><span class="p">[</span><span class="s1">&#39;rangles&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">initial_guess</span><span class="p">[</span><span class="s1">&#39;langles&#39;</span><span class="p">]</span>
-            <span class="k">elif</span> <span class="s1">&#39;langles&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">initial_guess</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">initial_guess</span><span class="p">[</span><span class="s1">&#39;langles&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">initial_guess</span><span class="p">[</span><span class="s1">&#39;rangles&#39;</span><span class="p">]</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;either langles or rangles should be provided&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">symmetric</span> <span class="o">=</span> <span class="kc">True</span>      
 
         <span class="n">modified_params</span> <span class="o">=</span> <span class="p">{}</span>
 
@@ -274,10 +266,6 @@
         <span class="c1"># extract keys from the initial guess dataframe</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">from_fitter</span><span class="p">:</span>
             <span class="n">keys</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">initial_guess_dataframe</span><span class="o">.</span><span class="n">columns</span>
-
-            <span class="c1"># remove the keys that are not needed for the symmetric case</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">symmetric</span><span class="p">:</span>
-                <span class="n">keys</span> <span class="o">=</span> <span class="p">[</span><span class="n">key</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">keys</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">key</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;langle&#39;</span><span class="p">)]</span>
 
             <span class="n">pd_fitparams</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">fitparams</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">keys</span><span class="p">)</span>
             <span class="n">pd_fitparams</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rescale_fitparams</span><span class="p">(</span><span class="n">pd_fitparams</span><span class="p">)</span>
@@ -316,7 +304,9 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="n">rescaled_fitparams_df</span> <span class="o">=</span> <span class="n">fitparams_df</span>
 
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">check_physical_validity</span><span class="p">(</span><span class="n">rescaled_fitparams_df</span><span class="p">)</span></div>
+        <span class="n">rescaled</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">check_physical_validity</span><span class="p">(</span><span class="n">rescaled_fitparams_df</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">rescaled</span> </div>
 
 <div class="viewcode-block" id="StackedTrapezoidGeometry.check_physical_validity"><a class="viewcode-back" href="../../../cdsaxs.simulations.html#cdsaxs.simulations.stacked_trapezoid.StackedTrapezoidGeometry.check_physical_validity">[docs]</a>    <span class="k">def</span> <span class="nf">check_physical_validity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rescaled_fitparams_df</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Check if the values obtained from the fitter make physical sense.</span>
@@ -398,6 +388,8 @@
         <span class="c1"># handling symmetric case</span>
         <span class="k">if</span> <span class="n">langles</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="n">langles</span> <span class="o">=</span> <span class="n">rangles</span>
+        <span class="k">if</span> <span class="n">rangles</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">rangles</span> <span class="o">=</span> <span class="n">langles</span>
         
         <span class="k">try</span><span class="p">:</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">xp</span> <span class="o">==</span> <span class="n">cp</span><span class="p">:</span>
