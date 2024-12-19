@@ -191,13 +191,19 @@
 <span class="sd">            initial_guess (dict): dictionary containing the initial guess for the parameters</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">langles</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">rangles</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">initial_guess</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> 
-            <span class="n">langles</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;langles&quot;</span><span class="p">]</span>
-            <span class="n">rangles</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;rangles&quot;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="s2">&quot;langles&quot;</span> <span class="ow">in</span> <span class="n">params</span><span class="p">:</span>
+                <span class="n">langles</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;langles&quot;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="s2">&quot;rangles&quot;</span> <span class="ow">in</span> <span class="n">params</span><span class="p">:</span>
+                <span class="n">rangles</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;rangles&quot;</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">langles</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">initial_guess</span><span class="p">[</span><span class="s2">&quot;langles&quot;</span><span class="p">][</span><span class="s2">&quot;value&quot;</span><span class="p">]</span>
-            <span class="n">rangles</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">initial_guess</span><span class="p">[</span><span class="s2">&quot;rangles&quot;</span><span class="p">][</span><span class="s2">&quot;value&quot;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="s2">&quot;langles&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">initial_guess</span><span class="p">:</span>
+                <span class="n">langles</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">initial_guess</span><span class="p">[</span><span class="s2">&quot;langles&quot;</span><span class="p">][</span><span class="s2">&quot;value&quot;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="s2">&quot;rangles&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">initial_guess</span><span class="p">:</span>
+                <span class="n">rangles</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">initial_guess</span><span class="p">[</span><span class="s2">&quot;rangles&quot;</span><span class="p">][</span><span class="s2">&quot;value&quot;</span><span class="p">]</span>
 
         <span class="c1">#from the initial_guess dictionary get the number of langles</span>
         <span class="c1"># Check the number of angles provided</span>
