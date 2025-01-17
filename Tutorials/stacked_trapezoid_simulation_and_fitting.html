@@ -74,6 +74,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../for_developpers.html#project-structure">Project Structure</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../for_developpers.html#creating-a-new-simulation-model">Creating a New Simulation Model</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../for_developpers.html#testing">Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../for_developpers.html#modifying-and-building-the-documentation">Modifying and building the documentation</a></li>
 </ul>
 
         </div>
@@ -166,7 +167,7 @@ i_params = {&#39;heights&#39;: height,
 <p><em>weight</em> - weight of each individual trapezoid to account for the fact that they could be made of different materials. here we will assume that all the trapezoids are made of the same material hence the weight is not necessary.</p>
 <p>Note: In symmetric case either left or right angle can be passed and the other will be calculated using the symmetry.</p>
 <p>So we are constructing a line space pattern and the cross section of each line looks like following:</p>
-<p><img alt="double trapezoid" src="../_images/double_stack.png" /></p>
+<img alt="double trapezoid" src="../_images/double_stack.png" />
 <section id="Create-instance-of-the-Simulation-class-and-call-simulate_diffraction-method">
 <h3>Create instance of the Simulation class and call <code class="docutils literal notranslate"><span class="pre">simulate_diffraction</span></code> method<a class="headerlink" href="#Create-instance-of-the-Simulation-class-and-call-simulate_diffraction-method" title="Permalink to this heading"></a></h3>
 <div class="nbinput docutils container">
@@ -215,7 +216,7 @@ qx, qz, intensity
 </pre></div>
 </div>
 <p>for a text file you can read the data using the following code:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">genfromtxt</span><span class="p">(</span><span class="s1">&#39;path_to_file.txt&#39;</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s1">&#39;,&#39;</span><span class="p">,</span> <span class="n">skip_header</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 <span class="n">qx</span> <span class="o">=</span> <span class="n">data</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span>
 <span class="n">qz</span> <span class="o">=</span> <span class="n">data</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span>

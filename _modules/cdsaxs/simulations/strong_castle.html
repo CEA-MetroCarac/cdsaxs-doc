@@ -54,6 +54,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../for_developpers.html#project-structure">Project Structure</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../for_developpers.html#creating-a-new-simulation-model">Creating a New Simulation Model</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../for_developpers.html#testing">Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../for_developpers.html#modifying-and-building-the-documentation">Modifying and building the documentation</a></li>
 </ul>
 
         </div>
@@ -90,20 +91,20 @@
 <span class="sd">        StrongCastleDiffraction: This class is a child class of the StackedTrapezoidDiffraction class.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="kn">import</span> <span class="nn">re</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
 
-<span class="kn">from</span> <span class="nn">.stacked_trapezoid</span> <span class="kn">import</span> <span class="n">StackedTrapezoidSimulation</span><span class="p">,</span> <span class="n">StackedTrapezoidGeometry</span><span class="p">,</span> <span class="n">StackedTrapezoidDiffraction</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.stacked_trapezoid</span><span class="w"> </span><span class="kn">import</span> <span class="n">StackedTrapezoidSimulation</span><span class="p">,</span> <span class="n">StackedTrapezoidGeometry</span><span class="p">,</span> <span class="n">StackedTrapezoidDiffraction</span>
 
 
 
 
-<div class="viewcode-block" id="StrongCastleSimulation"><a class="viewcode-back" href="../../../cdsaxs.simulations.html#cdsaxs.simulations.strong_castle.StrongCastleSimulation">[docs]</a><span class="k">class</span> <span class="nc">StrongCastleSimulation</span><span class="p">(</span><span class="n">StackedTrapezoidSimulation</span><span class="p">):</span>
+<div class="viewcode-block" id="StrongCastleSimulation"><a class="viewcode-back" href="../../../cdsaxs.simulations.html#cdsaxs.simulations.strong_castle.StrongCastleSimulation">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">StrongCastleSimulation</span><span class="p">(</span><span class="n">StackedTrapezoidSimulation</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot; This class is a child class of the StackedTrapezoidSimulation class.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">qys</span><span class="p">,</span> <span class="n">qzs</span><span class="p">,</span> <span class="n">from_fitter</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">use_gpu</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">initial_guess</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">qys</span><span class="p">,</span> <span class="n">qzs</span><span class="p">,</span> <span class="n">from_fitter</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">use_gpu</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">initial_guess</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; This init method modifies the parent class init method by adding the StrongCastleGeometry and StrongCastleDiffraction classes</span>
 <span class="sd">            instead of the StackedTrapezoidGeometry and StackedTrapezoidDiffraction classes.</span>
 
@@ -124,12 +125,12 @@
 
 
 
-<div class="viewcode-block" id="StrongCastleGeometry"><a class="viewcode-back" href="../../../cdsaxs.simulations.html#cdsaxs.simulations.strong_castle.StrongCastleGeometry">[docs]</a><span class="k">class</span> <span class="nc">StrongCastleGeometry</span><span class="p">(</span><span class="n">StackedTrapezoidGeometry</span><span class="p">):</span>
+<div class="viewcode-block" id="StrongCastleGeometry"><a class="viewcode-back" href="../../../cdsaxs.simulations.html#cdsaxs.simulations.strong_castle.StrongCastleGeometry">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">StrongCastleGeometry</span><span class="p">(</span><span class="n">StackedTrapezoidGeometry</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot; This class is a child class of the StackedTrapezoidGeometry class. Several methods are modified and added to implement the Strong Castle model(notably the most important</span>
 <span class="sd">        calculate_ycoords).</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xp</span><span class="o">=</span><span class="n">np</span><span class="p">,</span> <span class="n">from_fitter</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">initial_guess</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xp</span><span class="o">=</span><span class="n">np</span><span class="p">,</span> <span class="n">from_fitter</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">initial_guess</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        This init method is similar to the parent class, except it removes the fixed parameters `n1` and `n2`</span>
@@ -155,7 +156,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">xp</span><span class="o">=</span><span class="n">xp</span><span class="p">,</span> <span class="n">from_fitter</span><span class="o">=</span><span class="n">from_fitter</span><span class="p">,</span> <span class="n">initial_guess</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
     
-<div class="viewcode-block" id="StrongCastleGeometry.remove_fixed_params"><a class="viewcode-back" href="../../../cdsaxs.simulations.html#cdsaxs.simulations.strong_castle.StrongCastleGeometry.remove_fixed_params">[docs]</a>    <span class="k">def</span> <span class="nf">remove_fixed_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">initial_guess</span><span class="p">):</span>
+<div class="viewcode-block" id="StrongCastleGeometry.remove_fixed_params"><a class="viewcode-back" href="../../../cdsaxs.simulations.html#cdsaxs.simulations.strong_castle.StrongCastleGeometry.remove_fixed_params">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">remove_fixed_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">initial_guess</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Remove the fixed parameters which are the number of first and second layer of trapezoids n1 and n2 from the initial_guess dictionary so that they are not fitted.</span>
 
 <span class="sd">        Args:</span>
@@ -173,7 +174,7 @@
 
         <span class="k">return</span> <span class="n">initial_guess_for_fit</span></div>
     
-<div class="viewcode-block" id="StrongCastleGeometry.set_n1_n2"><a class="viewcode-back" href="../../../cdsaxs.simulations.html#cdsaxs.simulations.strong_castle.StrongCastleGeometry.set_n1_n2">[docs]</a>    <span class="k">def</span> <span class="nf">set_n1_n2</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n1</span><span class="p">,</span> <span class="n">n2</span><span class="p">):</span>
+<div class="viewcode-block" id="StrongCastleGeometry.set_n1_n2"><a class="viewcode-back" href="../../../cdsaxs.simulations.html#cdsaxs.simulations.strong_castle.StrongCastleGeometry.set_n1_n2">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">set_n1_n2</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n1</span><span class="p">,</span> <span class="n">n2</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Set self.n1 and self.n2 to the provided values.</span>
 
 <span class="sd">        Args:</span>
@@ -183,7 +184,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">n1</span> <span class="o">=</span> <span class="n">n1</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">n2</span> <span class="o">=</span> <span class="n">n2</span></div>
 
-<div class="viewcode-block" id="StrongCastleGeometry.check_initial_guess"><a class="viewcode-back" href="../../../cdsaxs.simulations.html#cdsaxs.simulations.strong_castle.StrongCastleGeometry.check_initial_guess">[docs]</a>    <span class="k">def</span> <span class="nf">check_initial_guess</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">):</span>
+<div class="viewcode-block" id="StrongCastleGeometry.check_initial_guess"><a class="viewcode-back" href="../../../cdsaxs.simulations.html#cdsaxs.simulations.strong_castle.StrongCastleGeometry.check_initial_guess">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">check_initial_guess</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">            Check if the number of trapezoids  n1+n2 is equal to the number of angles in the initial_guess dictionary</span>
 
@@ -218,7 +219,7 @@
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Number of angles should be same as the sum of the number of trapezoids. Expected </span><span class="si">{</span><span class="n">expected_n</span><span class="si">}</span><span class="s2"> but got </span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="StrongCastleGeometry.calculate_ycoords"><a class="viewcode-back" href="../../../cdsaxs.simulations.html#cdsaxs.simulations.strong_castle.StrongCastleGeometry.calculate_ycoords">[docs]</a>    <span class="k">def</span> <span class="nf">calculate_ycoords</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
+<div class="viewcode-block" id="StrongCastleGeometry.calculate_ycoords"><a class="viewcode-back" href="../../../cdsaxs.simulations.html#cdsaxs.simulations.strong_castle.StrongCastleGeometry.calculate_ycoords">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">calculate_ycoords</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        This is the modified version of the calculate_ycoords method in the parent class. The two trapezoids are separated into two groups and the y coordinates are calculated</span>
 <span class="sd">        and the y coordinates of the second trapezoid are shifted by the overlay value.</span>
@@ -279,12 +280,12 @@
         <span class="k">return</span> <span class="n">y1</span> <span class="p">,</span> <span class="n">y2</span></div></div>
 
 
-<div class="viewcode-block" id="StrongCastleDiffraction"><a class="viewcode-back" href="../../../cdsaxs.simulations.html#cdsaxs.simulations.strong_castle.StrongCastleDiffraction">[docs]</a><span class="k">class</span> <span class="nc">StrongCastleDiffraction</span><span class="p">(</span><span class="n">StackedTrapezoidDiffraction</span><span class="p">):</span>
+<div class="viewcode-block" id="StrongCastleDiffraction"><a class="viewcode-back" href="../../../cdsaxs.simulations.html#cdsaxs.simulations.strong_castle.StrongCastleDiffraction">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">StrongCastleDiffraction</span><span class="p">(</span><span class="n">StackedTrapezoidDiffraction</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot; This class is a child class of the StackedTrapezoidDiffraction class. It modifies the correct_form_factor_intensity method to account for the two </span>
 <span class="sd">        fixed params n1 and n2 which are the number of trapezoids in the first and second layer of trapezoids respectively.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="StrongCastleDiffraction.correct_form_factor_intensity"><a class="viewcode-back" href="../../../cdsaxs.simulations.html#cdsaxs.simulations.strong_castle.StrongCastleDiffraction.correct_form_factor_intensity">[docs]</a>    <span class="k">def</span> <span class="nf">correct_form_factor_intensity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">qys</span><span class="p">,</span> <span class="n">qzs</span><span class="p">,</span> <span class="n">fitparams</span><span class="p">):</span>
+<div class="viewcode-block" id="StrongCastleDiffraction.correct_form_factor_intensity"><a class="viewcode-back" href="../../../cdsaxs.simulations.html#cdsaxs.simulations.strong_castle.StrongCastleDiffraction.correct_form_factor_intensity">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">correct_form_factor_intensity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">qys</span><span class="p">,</span> <span class="n">qzs</span><span class="p">,</span> <span class="n">fitparams</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;remove the fixed parameters n1 and n2 from the fitparams dictionary and call the parent class correct_form_factor_intensity method.</span>
 
 <span class="sd">        Args:</span>

@@ -54,6 +54,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../for_developpers.html#project-structure">Project Structure</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../for_developpers.html#creating-a-new-simulation-model">Creating a New Simulation Model</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../for_developpers.html#testing">Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../for_developpers.html#modifying-and-building-the-documentation">Modifying and building the documentation</a></li>
 </ul>
 
         </div>
@@ -81,18 +82,18 @@
            <div itemprop="articleBody">
              
   <h1>Source code for cdsaxs.residual</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Optional</span>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Optional</span>
 <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">.simulations.base</span> <span class="kn">import</span> <span class="n">Simulation</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">.simulations.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">Simulation</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="k">try</span><span class="p">:</span>
-    <span class="kn">import</span> <span class="nn">cupy</span> <span class="k">as</span> <span class="nn">cp</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">cupy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">cp</span>
 <span class="k">except</span> <span class="ne">ModuleNotFoundError</span><span class="p">:</span>
     <span class="n">cp</span> <span class="o">=</span> <span class="n">np</span>
 
 
 
-<div class="viewcode-block" id="Residual"><a class="viewcode-back" href="../../modules.html#cdsaxs.residual.Residual">[docs]</a><span class="k">class</span> <span class="nc">Residual</span><span class="p">:</span>
+<div class="viewcode-block" id="Residual"><a class="viewcode-back" href="../../modules.html#cdsaxs.residual.Residual">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">Residual</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A class to calculate the residual between experimental and simulated data, used for fitness evaluation in optimization algorithms.</span>
 
@@ -116,7 +117,7 @@
 <span class="sd">        fix_fitness_mcmc: Fix the fitness for the MCMC algorithm using the Metropolis-Hastings criterion.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">fit_mode</span><span class="o">=</span><span class="s1">&#39;cmaes&#39;</span><span class="p">,</span> <span class="n">xp</span><span class="o">=</span><span class="n">np</span><span class="p">,</span> <span class="n">Simulation</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="s1">&#39;Simulation&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">,</span> <span class="n">best_fit</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">fit_mode</span><span class="o">=</span><span class="s1">&#39;cmaes&#39;</span><span class="p">,</span> <span class="n">xp</span><span class="o">=</span><span class="n">np</span><span class="p">,</span> <span class="n">Simulation</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="s1">&#39;Simulation&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">,</span> <span class="n">best_fit</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">        Parameters:</span>
@@ -142,7 +143,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">xp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Simulation</span><span class="o">.</span><span class="n">xp</span> <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Simulation</span><span class="p">,</span> <span class="s1">&#39;xp&#39;</span><span class="p">)</span> <span class="k">else</span> <span class="n">np</span>
 
 
-<div class="viewcode-block" id="Residual.__call__"><a class="viewcode-back" href="../../modules.html#cdsaxs.residual.Residual.__call__">[docs]</a>    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fit_params</span><span class="p">):</span>
+<div class="viewcode-block" id="Residual.__call__"><a class="viewcode-back" href="../../modules.html#cdsaxs.residual.Residual.__call__">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fit_params</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Calculate the residual between experimental and simulated data.</span>
 
@@ -176,7 +177,7 @@
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Invalid fit mode. Please choose either &#39;cmaes&#39; or &#39;mcmc&#39;.&quot;</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="Residual.log_error"><a class="viewcode-back" href="../../modules.html#cdsaxs.residual.Residual.log_error">[docs]</a>    <span class="k">def</span> <span class="nf">log_error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exp_i_array</span><span class="p">,</span> <span class="n">sim_i_array</span><span class="p">):</span>
+<div class="viewcode-block" id="Residual.log_error"><a class="viewcode-back" href="../../modules.html#cdsaxs.residual.Residual.log_error">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">log_error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exp_i_array</span><span class="p">,</span> <span class="n">sim_i_array</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return the difference between two set of values (experimental and</span>
 <span class="sd">        simulated data), using the log error</span>
@@ -216,7 +217,7 @@
 
         <span class="k">return</span> <span class="n">error</span></div>
 
-<div class="viewcode-block" id="Residual.fix_fitness_mcmc"><a class="viewcode-back" href="../../modules.html#cdsaxs.residual.Residual.fix_fitness_mcmc">[docs]</a>    <span class="k">def</span> <span class="nf">fix_fitness_mcmc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fitness</span><span class="p">):</span>
+<div class="viewcode-block" id="Residual.fix_fitness_mcmc"><a class="viewcode-back" href="../../modules.html#cdsaxs.residual.Residual.fix_fitness_mcmc">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">fix_fitness_mcmc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fitness</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Metropolis-Hastings criterion: acceptance probability equal to ratio between P(new)/P(old)</span>
 <span class="sd">        where P is proportional to probability distribution we want to find</span>

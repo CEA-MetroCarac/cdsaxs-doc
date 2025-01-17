@@ -68,6 +68,7 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="#testing">Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#modifying-and-building-the-documentation">Modifying and building the documentation</a></li>
 </ul>
 
         </div>
@@ -243,8 +244,23 @@ For getting concrete examples, you can refer to the existing models in the <cite
 <h1>Testing<a class="headerlink" href="#testing" title="Permalink to this heading"></a></h1>
 <p>Pytest is used for testing the codebase. The tests are located in the <cite>tests</cite> directory and are organized by module. When adding new features or modifying existing code,
 it is essential to write tests and check that the existing tests pass.</p>
+<p>To run the tests, you need to install the testing dependencies. You can do this by running the following command:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span class="o">(</span>cdsaxs<span class="o">)</span><span class="w"> </span>$<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>tests/requirements.txt
+</pre></div>
+</div>
 <p>To run the tests, navigate to the root directory of the project and execute the following command:</p>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span class="o">(</span>cdsaxs<span class="o">)</span><span class="w"> </span>$<span class="w"> </span>pytest
+</pre></div>
+</div>
+</section>
+<section id="modifying-and-building-the-documentation">
+<h1>Modifying and building the documentation<a class="headerlink" href="#modifying-and-building-the-documentation" title="Permalink to this heading"></a></h1>
+<p>TO build the documentation, you need to install the dependencies which are listed in the <cite>docs/requirements.txt</cite> file. You can install them by running the following command:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span class="o">(</span>cdsaxs<span class="o">)</span><span class="w"> </span>$<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>docs/requirements.txt
+</pre></div>
+</div>
+<p>The documentation is built using Sphinx. To modify the documentation, navigate to the <cite>docs</cite> directory and edit the <cite>.rst</cite> files. Once you have made your changes, you can build the documentation by running the following command:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span class="o">(</span>cdsaxs<span class="o">)</span><span class="w"> </span>$<span class="w"> </span>make<span class="w"> </span>html
 </pre></div>
 </div>
 </section>
