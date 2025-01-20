@@ -384,7 +384,7 @@
 
         <span class="k">return</span> <span class="n">best_corr</span><span class="p">,</span> <span class="n">best_fitness</span></div>
     
-<div class="viewcode-block" id="Fitter.mcmc_bestfit_stats"><a class="viewcode-back" href="../../modules.html#cdsaxs.fitter.Fitter.mcmc_bestfit_stats">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">mcmc_bestfit_stats</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">sigma</span><span class="p">,</span> <span class="n">nsteps</span><span class="p">,</span> <span class="n">nwalkers</span><span class="p">,</span> <span class="n">gaussian_move</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">test</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">dir_save</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="Fitter.mcmc_bestfit_stats"><a class="viewcode-back" href="../../modules.html#cdsaxs.fitter.Fitter.mcmc_bestfit_stats">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">mcmc_bestfit_stats</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">sigma</span><span class="p">,</span> <span class="n">nsteps</span><span class="p">,</span> <span class="n">nwalkers</span><span class="p">,</span> <span class="n">gaussian_move</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">test</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">dir_save</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">tau</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Generate a set of statstical data on the best fit parameters using the MCMC (Markov Chain Monte Carlo) algorithm. Two kinds of options for moves to explore solution space are provided gaussian and stretch move. Default is strech move and recommended.</span>
 
@@ -399,7 +399,7 @@
 <span class="sd">            seed (int, optional): The seed for the random number generator. If None, a random seed is generated. Default is None.</span>
 <span class="sd">            verbose (bool, optional): Controls whether to print progress information during fitting. If True, progress information is printed. Default is False.</span>
 <span class="sd">            test (bool, optional): Controls whether to test the function and return mean values instead of performing the full fitting process. If True, the function returns mean values. Default is True.</span>
-
+<span class="sd">            tau (float, optional): The autocorrelation time to find burnin steps. If None, is provided emcee package is used to estimate the autocorrelation time. If emcee fails to do so 1/3 of the first nsteps are discarded. Default is None.</span>
 <span class="sd">        Returns:</span>
 <span class="sd">            None</span>
 
@@ -430,10 +430,12 @@
         <span class="c1"># Empirical factor to modify MCMC acceptance rate</span>
         <span class="n">c</span> <span class="o">=</span> <span class="n">residual</span><span class="o">.</span><span class="n">c</span>
         
-        <span class="c1"># Generate a random seed if none is provided</span>
-        <span class="k">if</span> <span class="n">seed</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">seed</span> <span class="o">=</span> <span class="n">randrange</span><span class="p">(</span><span class="mi">2</span> <span class="o">**</span> <span class="mi">32</span><span class="p">)</span>
-        <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+        <span class="c1"># Assign the seed given to user if the format is correct</span>
+        <span class="k">if</span> <span class="n">seed</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">seed</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">and</span> <span class="n">seed</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Seed must be a non-negative integer.&quot;</span><span class="p">)</span>
         
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">sigma</span><span class="p">,</span> <span class="s1">&#39;__len__&#39;</span><span class="p">):</span>
             <span class="n">sigma</span> <span class="o">=</span> <span class="p">[</span><span class="n">sigma</span><span class="p">]</span> <span class="o">*</span> <span class="n">N</span>
@@ -471,12 +473,15 @@
                 <span class="n">do_verbose</span><span class="p">(</span><span class="n">Sampler</span><span class="p">)</span>
             
 
-        <span class="c1">#Autocorelation time to find burnin steps</span>
+        <span class="c1">#Autocorelation time to find burnin steps, if not provided by user and emcee fails to do so 1/3 of the first nsteps are discarded. 1/3 period is the common heuristic for MCMC burnin</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">tau</span> <span class="o">=</span> <span class="n">Sampler</span><span class="o">.</span><span class="n">get_autocorr_time</span><span class="p">(</span><span class="n">tol</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">tau</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">tau</span> <span class="o">=</span> <span class="n">Sampler</span><span class="o">.</span><span class="n">get_autocorr_time</span><span class="p">(</span><span class="n">tol</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
             <span class="n">burnin</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">tau</span><span class="p">))</span>
-        <span class="k">except</span><span class="p">:</span>
-            <span class="n">burnin</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="mi">3</span> <span class="o">*</span> <span class="n">nsteps</span><span class="p">)</span>
+        <span class="k">except</span> <span class="p">(</span><span class="n">emcee</span><span class="o">.</span><span class="n">autocorr</span><span class="o">.</span><span class="n">AutocorrError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">)</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Warning: Failed to compute autocorrelation time. Using default burn-in which is 1/3 of nsteps. Error: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">burnin</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">nsteps</span> <span class="o">/</span> <span class="mi">3</span><span class="p">)</span> 
+
         
         
         <span class="c1"># Data processing and analysis</span>
@@ -579,7 +584,6 @@
 <div class="viewcode-block" id="Fitter.do_stats"><a class="viewcode-back" href="../../modules.html#cdsaxs.fitter.Fitter.do_stats">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">do_stats</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">cf</span><span class="o">=</span><span class="mf">0.99</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Generate a set of statistical data on the best fit parameters obtained from the MCMC fitting process.</span>
 
 <span class="sd">        This method generates a set of statistical data on the best fit parameters obtained from the MCMC fitting process.</span>
 
