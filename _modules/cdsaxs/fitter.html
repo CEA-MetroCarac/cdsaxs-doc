@@ -384,7 +384,7 @@
 
         <span class="k">return</span> <span class="n">best_corr</span><span class="p">,</span> <span class="n">best_fitness</span></div>
     
-<div class="viewcode-block" id="Fitter.mcmc_bestfit_stats"><a class="viewcode-back" href="../../modules.html#cdsaxs.fitter.Fitter.mcmc_bestfit_stats">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">mcmc_bestfit_stats</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">sigma</span><span class="p">,</span> <span class="n">nsteps</span><span class="p">,</span> <span class="n">nwalkers</span><span class="p">,</span> <span class="n">gaussian_move</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">test</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">dir_save</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">tau</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="Fitter.mcmc_bestfit_stats"><a class="viewcode-back" href="../../modules.html#cdsaxs.fitter.Fitter.mcmc_bestfit_stats">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">mcmc_bestfit_stats</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">sigma</span><span class="p">,</span> <span class="n">nsteps</span><span class="p">,</span> <span class="n">nwalkers</span><span class="p">,</span> <span class="n">gaussian_move</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">test</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">dir_save</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">tau</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Generate a set of statstical data on the best fit parameters using the MCMC (Markov Chain Monte Carlo) algorithm. Two kinds of options for moves to explore solution space are provided gaussian and stretch move. Default is strech move and recommended.</span>
 
@@ -400,6 +400,7 @@
 <span class="sd">            verbose (bool, optional): Controls whether to print progress information during fitting. If True, progress information is printed. Default is False.</span>
 <span class="sd">            test (bool, optional): Controls whether to test the function and return mean values instead of performing the full fitting process. If True, the function returns mean values. Default is True.</span>
 <span class="sd">            tau (float, optional): The autocorrelation time to find burnin steps. If None, is provided emcee package is used to estimate the autocorrelation time. If emcee fails to do so 1/3 of the first nsteps are discarded. Default is None.</span>
+<span class="sd">            c (float, optional): Empirical factor to modify the MCMC acceptance rate. Default is 1e-5.</span>
 <span class="sd">        Returns:</span>
 <span class="sd">            None</span>
 
@@ -417,7 +418,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">Simulation</span><span class="o">.</span><span class="n">set_from_fitter</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">best_fit_cmaes</span><span class="p">)</span>
 
         <span class="c1">#declare Fitness function and register</span>
-        <span class="n">residual</span> <span class="o">=</span> <span class="n">Residual</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">exp_data</span><span class="p">,</span> <span class="n">fit_mode</span><span class="o">=</span><span class="s1">&#39;mcmc&#39;</span><span class="p">,</span> <span class="n">xp</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">xp</span><span class="p">,</span> <span class="n">Simulation</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">Simulation</span><span class="p">,</span> <span class="n">best_fit</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">best_fit_cmaes</span><span class="p">)</span>
+        <span class="n">residual</span> <span class="o">=</span> <span class="n">Residual</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">exp_data</span><span class="p">,</span> <span class="n">fit_mode</span><span class="o">=</span><span class="s1">&#39;mcmc&#39;</span><span class="p">,</span> <span class="n">xp</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">xp</span><span class="p">,</span> <span class="n">Simulation</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">Simulation</span><span class="p">,</span> <span class="n">best_fit</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">best_fit_cmaes</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="n">c</span><span class="p">)</span>
 
 
         <span class="k">def</span><span class="w"> </span><span class="nf">do_verbose</span><span class="p">(</span><span class="n">Sampler</span><span class="p">):</span>
@@ -427,8 +428,8 @@
                 <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Acceptance fraction: &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">([</span><span class="n">Sampler</span><span class="o">.</span><span class="n">acceptance_fraction</span> <span class="k">for</span> <span class="n">Sampler</span> <span class="ow">in</span> <span class="n">Sampler</span><span class="p">])))</span>
             <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
         
-        <span class="c1"># Empirical factor to modify MCMC acceptance rate</span>
-        <span class="n">c</span> <span class="o">=</span> <span class="n">residual</span><span class="o">.</span><span class="n">c</span>
+        <span class="c1"># # Empirical factor to modify MCMC acceptance rate</span>
+        <span class="c1"># c = residual.c</span>
         
         <span class="c1"># Assign the seed given to user if the format is correct</span>
         <span class="k">if</span> <span class="n">seed</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -436,7 +437,8 @@
                 <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Seed must be a non-negative integer.&quot;</span><span class="p">)</span>
-        <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">()</span>
         
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">sigma</span><span class="p">,</span> <span class="s1">&#39;__len__&#39;</span><span class="p">):</span>
             <span class="n">sigma</span> <span class="o">=</span> <span class="p">[</span><span class="n">sigma</span><span class="p">]</span> <span class="o">*</span> <span class="n">N</span>
@@ -455,7 +457,7 @@
             <span class="c1"># Use Gaussian move for the proposal distribution</span>
             <span class="n">individuals</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="o">-</span><span class="n">sigma</span><span class="p">,</span> <span class="n">sigma</span><span class="p">,</span> <span class="n">N</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nwalkers</span><span class="p">)]</span>
             
-            <span class="n">Sampler</span> <span class="o">=</span> <span class="n">emcee</span><span class="o">.</span><span class="n">EnsembleSampler</span><span class="p">(</span><span class="n">nwalkers</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">residual</span><span class="p">,</span> <span class="n">moves</span><span class="o">=</span><span class="n">emcee</span><span class="o">.</span><span class="n">moves</span><span class="o">.</span><span class="n">GaussianMove</span><span class="p">(</span><span class="n">sigma</span><span class="p">),</span> <span class="n">pool</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">vectorize</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">Sampler</span> <span class="o">=</span> <span class="n">emcee</span><span class="o">.</span><span class="n">EnsembleSampler</span><span class="p">(</span><span class="n">nwalkers</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">residual</span><span class="p">,</span> <span class="n">moves</span><span class="o">=</span><span class="n">emcee</span><span class="o">.</span><span class="n">moves</span><span class="o">.</span><span class="n">GaussianMove</span><span class="p">(</span><span class="n">cov</span><span class="o">=</span><span class="n">sigma</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;vector&quot;</span><span class="p">),</span> <span class="n">pool</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">vectorize</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
             <span class="k">with</span> <span class="n">np</span><span class="o">.</span><span class="n">errstate</span><span class="p">(</span><span class="n">divide</span><span class="o">=</span><span class="s1">&#39;ignore&#39;</span><span class="p">,</span> <span class="n">invalid</span><span class="o">=</span><span class="s1">&#39;ignore&#39;</span><span class="p">):</span>    
                 <span class="n">Sampler</span><span class="o">.</span><span class="n">run_mcmc</span><span class="p">(</span><span class="n">individuals</span><span class="p">,</span> <span class="n">nsteps</span><span class="p">,</span> <span class="n">progress</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -583,13 +585,14 @@
         <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Saved to &#39;</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dir_save</span><span class="p">,</span> <span class="n">name</span><span class="p">))</span></div>
 
 <div class="viewcode-block" id="Fitter.do_stats"><a class="viewcode-back" href="../../modules.html#cdsaxs.fitter.Fitter.do_stats">[docs]</a>    <span class="nd">@staticmethod</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">do_stats</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">cf</span><span class="o">=</span><span class="mf">0.99</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">do_stats</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">ci</span><span class="o">=</span><span class="mf">0.95</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">        This method generates a set of statistical data on the best fit parameters obtained from the MCMC fitting process.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            df (pandas.DataFrame): The DataFrame containing the best fit parameters.</span>
+<span class="sd">            ci (float, optional): The confidence interval. Default is 0.95.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            pandas.DataFrame: A DataFrame containing the statistical data on the best fit parameters.</span>
@@ -602,9 +605,9 @@
         <span class="nb">min</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
         <span class="nb">max</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
 
-        <span class="n">z</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">cf</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">z</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">ci</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
 
-        <span class="n">uncertainity</span> <span class="o">=</span> <span class="n">z</span> <span class="o">*</span> <span class="n">std</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">count</span><span class="p">)</span>
+        <span class="n">uncertainity</span> <span class="o">=</span> <span class="n">z</span> <span class="o">*</span> <span class="p">(</span> <span class="n">std</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">count</span><span class="p">)</span> <span class="p">)</span>
 
         <span class="n">lower_ci</span> <span class="o">=</span> <span class="n">mean</span> <span class="o">-</span> <span class="n">uncertainity</span>
         <span class="n">upper_ci</span> <span class="o">=</span> <span class="n">mean</span> <span class="o">+</span> <span class="n">uncertainity</span>
