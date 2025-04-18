@@ -136,6 +136,10 @@
 <span class="sd">            use_gpu (bool, optional): Indicates if GPU should be used for numerical computations. Defaults to False.</span>
 <span class="sd">            initial_guess (dict, optional): Initial guess values for the simulation. Defaults to None.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Check if the input arrays are 1D or 2D</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">qys</span><span class="o">.</span><span class="n">ndim</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span> <span class="ow">and</span> <span class="n">qzs</span><span class="o">.</span><span class="n">ndim</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;qys and qzs arrays must be 1D or 2D.&quot;</span><span class="p">)</span>
+        
         <span class="bp">self</span><span class="o">.</span><span class="n">qys</span> <span class="o">=</span> <span class="n">qys</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">qzs</span> <span class="o">=</span> <span class="n">qzs</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">xp</span> <span class="o">=</span> <span class="n">cp</span> <span class="k">if</span> <span class="n">use_gpu</span> <span class="ow">and</span> <span class="n">CUPY_AVAILABLE</span> <span class="k">else</span> <span class="n">np</span>
@@ -144,7 +148,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">TrapezoidGeometry</span> <span class="o">=</span> <span class="n">StackedTrapezoidGeometry</span><span class="p">(</span><span class="n">xp</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">xp</span><span class="p">,</span> <span class="n">from_fitter</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">from_fitter</span><span class="p">,</span> <span class="n">initial_guess</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">initial_guess</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">TrapezoidDiffraction</span> <span class="o">=</span> <span class="n">StackedTrapezoidDiffraction</span><span class="p">(</span><span class="n">TrapezoidGeometry</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">TrapezoidGeometry</span><span class="p">,</span> <span class="n">xp</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">xp</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="StackedTrapezoidSimulation.simulate_diffraction"><a class="viewcode-back" href="../../../cdsaxs.simulations.html#cdsaxs.simulations.stacked_trapezoid.StackedTrapezoidSimulation.simulate_diffraction">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">simulate_diffraction</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fit_mode</span><span class="o">=</span><span class="s1">&#39;cmaes&#39;</span><span class="p">):</span>
+<div class="viewcode-block" id="StackedTrapezoidSimulation.simulate_diffraction"><a class="viewcode-back" href="../../../cdsaxs.simulations.html#cdsaxs.simulations.stacked_trapezoid.StackedTrapezoidSimulation.simulate_diffraction">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">simulate_diffraction</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fit_mode</span><span class="o">=</span><span class="s1">&#39;cmaes&#39;</span><span class="p">,</span> <span class="n">two_d</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Simulates the diffraction pattern of the stacked trapezoids.</span>
 
 <span class="sd">        Args:</span>
@@ -154,10 +158,27 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            corrected_intensity (array-like): A 2D array of floats containing the corrected intensity.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">corrected_intensity</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">TrapezoidDiffraction</span><span class="o">.</span><span class="n">correct_form_factor_intensity</span><span class="p">(</span><span class="n">qys</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">qys</span><span class="p">,</span> <span class="n">qzs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">qzs</span><span class="p">,</span> <span class="n">fitparams</span><span class="o">=</span><span class="n">params</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">two_d</span><span class="p">:</span>
+            <span class="c1"># flatten for the core computation</span>
+            <span class="n">qys_flat</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">qys</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
+            <span class="n">qzs_flat</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">qzs</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">qys_flat</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">qys</span>
+            <span class="n">qzs_flat</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">qzs</span>
+
+        <span class="n">corrected_intensity</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">TrapezoidDiffraction</span>\
+                                <span class="o">.</span><span class="n">correct_form_factor_intensity</span><span class="p">(</span>
+                                    <span class="n">qys</span><span class="o">=</span><span class="n">qys_flat</span><span class="p">,</span> 
+                                    <span class="n">qzs</span><span class="o">=</span><span class="n">qzs_flat</span><span class="p">,</span> 
+                                    <span class="n">fitparams</span><span class="o">=</span><span class="n">params</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">from_fitter</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">corrected_intensity</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">two_d</span><span class="p">:</span>
+                <span class="n">rows</span><span class="p">,</span> <span class="n">cols</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">qys</span><span class="o">.</span><span class="n">shape</span>
+                <span class="n">corrected_intensity_2d</span> <span class="o">=</span> <span class="n">corrected_intensity</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">rows</span><span class="p">,</span> <span class="n">cols</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">corrected_intensity_2d</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">corrected_intensity</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
         <span class="k">return</span> <span class="n">corrected_intensity</span></div>
 
