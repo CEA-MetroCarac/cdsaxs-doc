@@ -108,8 +108,8 @@
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A class representing a simulation of stacked trapezoids for diffraction pattern calculation.</span>
 
 <span class="sd">    Attributes:</span>
-<span class="sd">        qys (array-like): The q-values in the y-direction for diffraction calculation.</span>
-<span class="sd">        qzs (array-like): The q-values in the z-direction for diffraction calculation.</span>
+<span class="sd">        qys (array-like): The q-values in the y-direction for diffraction calculation (needs to be 1d or 2d array).</span>
+<span class="sd">        qzs (array-like): The q-values in the z-direction for diffraction calculation (needs to be 1d or 2d array).</span>
 <span class="sd">        xp (module): The module used for numerical computations (numpy or cupy).</span>
 <span class="sd">        from_fitter (bool): Indicates if the simulation is called from the fitter.</span>
 <span class="sd">        TrapezoidGeometry (StackedTrapezoidGeometry): The geometry object for the stacked trapezoids.</span>
@@ -130,8 +130,8 @@
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Initializes the StackedTrapezoidSimulation object.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            qys (array-like): The q-values in the y-direction for diffraction calculation.</span>
-<span class="sd">            qzs (array-like): The q-values in the z-direction for diffraction calculation.</span>
+<span class="sd">            qys (array-like): The q-values in the y-direction for diffraction calculation (needs to be 1d or 2d array).</span>
+<span class="sd">            qzs (array-like): The q-values in the z-direction for diffraction calculation (needs to be 1d or 2d array).</span>
 <span class="sd">            from_fitter (bool, optional): Indicates if the simulation is called from the fitter. Defaults to False.</span>
 <span class="sd">            use_gpu (bool, optional): Indicates if GPU should be used for numerical computations. Defaults to False.</span>
 <span class="sd">            initial_guess (dict, optional): Initial guess values for the simulation. Defaults to None.</span>
